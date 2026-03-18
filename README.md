@@ -1,6 +1,6 @@
 # dow-memory-trainer
 A collaboration between original code I wrote and Gemini Canvas app creator.
-
+play it here ------- 🚀 **[Play the DOW Memory Trainer Live Here!](https://opiedopy.github.io/dow-memory-trainer/)**
 
 Master the "Day of Week" Calendar Calculation
 
@@ -42,8 +42,8 @@ Live Stats: Tracks your accuracy, average speed, and personal best time.
 
 Responsive UI: Built with Tailwind CSS for a premium look on both desktop and mobile.
 
-💻 How to Run
-
+💻 How to Run     🚀 **[Play the DOW Memory Trainer Live Here!](https://opiedopy.github.io/dow-memory-trainer/)**
+or
 Download index.html.
 
 Open it in any modern web browser.
