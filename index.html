@@ -113,11 +113,11 @@
                 <h2 id="feedback-text" class="text-xl font-bold mb-4"></h2>
                 
                 <div id="breakdown-box" class="mb-6 text-left bg-slate-900 text-slate-300 p-5 rounded-2xl mono text-[12px] shadow-inner border border-slate-800">
-                    <h3 class="text-blue-400 font-bold mb-3 border-b border-slate-700 pb-2 flex justify-between items-center">
-                        <span>JACKIE'S LOGIC STEPS</span>
-                        <span id="result-date-label" class="text-slate-500 font-normal text-[10px]"></span>
+                    <h3 class="text-blue-400 font-bold mb-4 border-b border-slate-700 pb-3 flex flex-col items-start gap-1">
+                        <span class="text-[10px] tracking-widest uppercase">JACKIE'S LOGIC STEPS</span>
+                        <span id="result-date-label" class="text-white text-lg font-bold"></span>
                     </h3>
-                    <div id="breakdown-content" class="space-y-1.5"></div>
+                    <div id="breakdown-content" class="space-y-2"></div>
                     <div id="breakdown-sum" class="mt-4 pt-3 border-t border-slate-700 text-sm font-bold text-white"></div>
                 </div>
                 
@@ -254,7 +254,7 @@
             document.getElementById('feedback-icon').innerText = isCorrect ? "🎯" : "❌";
             document.getElementById('feedback-text').innerText = isCorrect ? "Correct!" : `Result: ${dowNames[currentData.logic.dow]}`;
             const l = currentData.logic;
-            document.getElementById('result-date-label').innerText = `CALC: ${currentData.m}/${currentData.d}/${currentData.y}`;
+            document.getElementById('result-date-label').innerText = `${currentData.m}/${currentData.d}/${currentData.y}`;
             document.getElementById('breakdown-content').innerHTML = `
                 <div class="flex justify-between"><span>N1 (Month):</span> <span class="text-blue-400 font-bold">${l.n1}</span></div>
                 <div class="flex justify-between"><span>N2 (Day):</span> <span class="text-blue-400 font-bold">${l.n2}</span></div>
