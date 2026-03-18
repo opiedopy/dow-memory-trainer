@@ -26,6 +26,8 @@
                 <button onclick="exitToMenu()" class="text-blue-600 hover:underline">Trainer Home</button>
                 <span class="text-slate-300">|</span>
                 <button onclick="openLearningHub()" class="text-blue-600 hover:underline">Learning Hub</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="showTopic('ABOUT')" class="text-blue-600 hover:underline">About</button>
             </div>
         </header>
 
@@ -145,6 +147,8 @@
                     <button onclick="showTopic('N5')" class="p-4 bg-blue-50 border border-blue-100 rounded-xl font-bold text-blue-700 hover:bg-blue-100 transition text-left text-sm">N5: Remainder</button>
                     <button onclick="showTopic('N6')" class="p-4 bg-blue-50 border border-blue-100 rounded-xl font-bold text-blue-700 hover:bg-blue-100 transition text-left text-sm">N6: N5 / 4</button>
                     <button onclick="showTopic('LEAP')" class="p-4 bg-orange-50 border border-orange-100 rounded-xl font-bold text-orange-700 hover:bg-orange-100 transition text-left text-sm">Leap Year Logic</button>
+                    <button onclick="showTopic('FINAL')" class="p-4 bg-green-50 border border-green-100 rounded-xl font-bold text-green-700 hover:bg-green-100 transition text-left text-sm">Final: Modulo 7</button>
+                    <button onclick="showTopic('ABOUT')" class="p-4 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-200 transition text-left text-sm col-span-2 text-center">About This Logic</button>
                 </div>
                 <div id="topic-detail" class="hidden">
                     <button onclick="backToHub()" class="text-blue-600 text-xs font-bold mb-4 inline-flex items-center hover:underline">← BACK TO LIST</button>
@@ -168,11 +172,30 @@
         const topicContent = {
             'N1': { title: 'N1: Month Values', body: `<p>Values for Jan-Dec:</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>Jan: 4 (3*)</div><div>Jul: 3</div><div>Feb: 0 (-1*)</div><div>Aug: 6</div><div>Mar: 0</div><div>Sep: 2</div><div>Apr: 3</div><div>Oct: 4</div><div>May: 5</div><div>Nov: 0</div><div>Jun: 1</div><div>Dec: 2</div></div><p class="mt-2 text-xs italic">*Leap Year values (Jan/Feb only).</p>` },
             'N2': { title: 'N2: Day', body: `<p>The day of the month. Example: October 14th, N2 = 14.</p>` },
-            'N3': { title: 'N3: Century Value', body: `<p>Repeating values starting with 1600: 2, 0, 5, 3.</p><ul class="list-disc pl-5"><li>2000s = 2</li><li>2100s = 0</li><li>2200s = 5</li><li>2300s = 3</li></ul>` },
+            'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 1600: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div>` },
             'N4': { title: 'N4: YY / 12', body: `<p>Number of times 12 goes into the last two digits of the year (YY).</p>` },
             'N5': { title: 'N5: Remainder', body: `<p>The remainder after dividing YY by 12 (YY % 12).</p>` },
-            'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into N5.</p>` },
-            'LEAP': { title: 'Leap Year Logic', body: `<p>Divisible by 4, except if YY is 00, unless CCYY is divisible by 400. Leap adjustments: Jan = 3, Feb = -1.</p>` }
+            'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into the remainder (N5).</p><div class="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs font-medium text-slate-500">Whole number of the number of times 4 goes into N5.</div>` },
+            'LEAP': { title: 'Leap Year Logic', body: `<p>Divisible by 4, except if YY is 00, unless CCYY is divisible by 400. Leap adjustments: Jan = 3, Feb = -1.</p>` },
+            'FINAL': { title: 'Final: Modulo 7', body: `<p>Add N1 through N6. Then find the remainder when divided by 7 (Modulo 7).</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>0: Sun</div><div>4: Thu</div><div>1: Mon</div><div>5: Fri</div><div>2: Tue</div><div>6: Sat</div><div>3: Wed</div></div><div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs"><p class="font-bold mb-1">Example:</p><p>If sum is 33, then 33 / 7 = 4 with remainder of 5 (33 % 7 = 5). Therefore, the Day is Friday.</p></div>` },
+            'ABOUT': { 
+                title: 'About the Logic', 
+                body: `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
+                    <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
+                    
+                    <div class="italic space-y-2">
+                        <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright. May be used or copied with attribution.</p>
+                        <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
+                    </div>
+
+                    <p>Jackie Dander came up with this method as the simplest memorization display method for performing Day of Week tricks in front of audiences. It is just figuring out 6 numbers.</p>
+                    
+                    <p>He thinks you can master the memorization in a few days if you have talent for memorizing lists. For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him!</p>
+                    
+                    <p>And smile when an audience member gives you an easy date. Such as July 4, 2400. As you will find out, that date can be resolved in 1 second as Tuesday. Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.</p>
+                </div>` 
+            }
         };
 
         let currentData = null, startTime = 0, timerInterval = null;
@@ -207,7 +230,6 @@
         
         function showManualMode() { 
             hideStates(); 
-            // Reset fields for fresh entry
             document.getElementById('manual-m').value = '';
             document.getElementById('manual-d').value = '';
             document.getElementById('manual-y').value = '';
@@ -230,7 +252,6 @@
             document.getElementById('state-active').classList.remove('hidden');
             document.getElementById('date-display').innerText = `${m}/${d}/${y}`;
             
-            // Reset and start timer
             document.getElementById('timer').innerText = '0.0s';
             startTime = Date.now();
             clearInterval(timerInterval);
@@ -309,6 +330,7 @@
         function openLearningHub() { document.getElementById('learning-modal').classList.remove('opacity-0', 'pointer-events-none'); backToHub(); }
         function closeLearningHub() { document.getElementById('learning-modal').classList.add('opacity-0', 'pointer-events-none'); }
         function showTopic(id) {
+            document.getElementById('learning-modal').classList.remove('opacity-0', 'pointer-events-none');
             document.getElementById('hub-menu').classList.add('hidden');
             document.getElementById('topic-detail').classList.remove('hidden');
             document.getElementById('topic-title').innerText = topicContent[id].title;
