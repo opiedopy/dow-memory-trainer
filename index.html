@@ -2,23 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jackie Dander’s DOW Memory Trainer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .mono { font-family: 'JetBrains+Mono', monospace; }
         .card-anim { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
         .modal { transition: opacity 0.25s ease; z-index: 100; }
         .date-text { font-size: 3rem; line-height: 1; }
-        @media (max-width: 640px) { .date-text { font-size: 2.25rem; } }
+        @media (max-width: 640px) { 
+            .date-text { font-size: 2.25rem; } 
+            input { font-size: 16px !important; } 
+        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col text-slate-900">
 
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-2xl">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">DOW Memory Trainer</h1>
             <p class="text-xs text-slate-400 font-mono mb-4 italic">Logic by Jackie Dander • fuzzywidget.com</p>
@@ -31,29 +35,26 @@
             </div>
         </header>
 
-        <!-- STATS BOARD -->
-        <div id="stats-board" class="grid grid-cols-3 gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <div id="stats-board" class="grid grid-cols-3 gap-3 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
             <div class="text-center">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Accuracy</p>
-                <p id="stat-accuracy" class="text-xl font-bold text-blue-600">0%</p>
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Accuracy</p>
+                <p id="stat-accuracy" class="text-lg font-bold text-blue-600">0%</p>
             </div>
             <div class="text-center border-x border-slate-100">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Time</p>
-                <p id="stat-avg" class="text-xl font-bold text-blue-600">0.0s</p>
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Avg Time</p>
+                <p id="stat-avg" class="text-lg font-bold text-blue-600">0.0s</p>
             </div>
             <div class="text-center">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Best</p>
-                <p id="stat-best" class="text-xl font-bold text-green-600">--</p>
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Best</p>
+                <p id="stat-best" class="text-lg font-bold text-green-600">--</p>
             </div>
         </div>
 
-        <!-- MAIN GAME CARD -->
-        <div id="game-card" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center card-anim relative overflow-hidden min-h-[420px] flex flex-col justify-center">
+        <div id="game-card" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 text-center card-anim relative overflow-hidden min-h-[420px] flex flex-col justify-center">
             
-            <!-- START STATE -->
             <div id="state-start">
-                <div class="mb-8 py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center">
-                    <p class="text-slate-500 font-medium italic px-4">"Master the N1-N6 logic for 1753 - 2799"</p>
+                <div class="mb-8 py-10 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center">
+                    <p class="text-slate-500 font-medium italic px-4 text-sm">"Master the N1-N6 logic for 1753 - 2799"</p>
                 </div>
                 <div class="flex flex-col gap-4">
                     <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-10 rounded-xl text-xl shadow-lg transform active:scale-95 transition uppercase tracking-wide">
@@ -65,31 +66,29 @@
                 </div>
             </div>
 
-            <!-- MANUAL LOOKUP STATE -->
             <div id="state-manual" class="hidden text-left">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-slate-800">Manual Logic Lookup</h2>
-                    <button onclick="exitToMenu()" class="text-blue-400 text-sm font-normal underline">Cancel</button>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Manual Lookup</h2>
+                    <button onclick="exitToMenu()" class="text-blue-500 text-sm font-semibold underline">Back</button>
                 </div>
-                <div class="grid grid-cols-3 gap-4 mb-8">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-tight">Month</label>
-                        <input type="number" id="manual-m" placeholder="MM" class="w-full p-4 border border-slate-200 rounded-xl text-center font-bold text-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                <div class="grid grid-cols-3 gap-2 mb-8">
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tight ml-1">Month</label>
+                        <input type="number" id="manual-m" placeholder="MM" pattern="[0-9]*" inputmode="numeric" class="w-full p-3 sm:p-4 border border-slate-200 rounded-xl text-center font-bold text-lg sm:text-xl focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-tight">Day</label>
-                        <input type="number" id="manual-d" placeholder="DD" class="w-full p-4 border border-slate-200 rounded-xl text-center font-bold text-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tight ml-1">Day</label>
+                        <input type="number" id="manual-d" placeholder="DD" pattern="[0-9]*" inputmode="numeric" class="w-full p-3 sm:p-4 border border-slate-200 rounded-xl text-center font-bold text-lg sm:text-xl focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-tight">Year</label>
-                        <input type="number" id="manual-y" placeholder="YYYY" class="w-full p-4 border border-slate-200 rounded-xl text-center font-bold text-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tight ml-1">Year</label>
+                        <input type="number" id="manual-y" placeholder="YYYY" pattern="[0-9]*" inputmode="numeric" class="w-full p-3 sm:p-4 border border-slate-200 rounded-xl text-center font-bold text-lg sm:text-xl focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50">
                     </div>
                 </div>
-                <button onclick="runManualCalculation()" class="w-full bg-[#1e293b] hover:bg-black text-white py-5 rounded-xl font-bold shadow-lg transition uppercase tracking-widest text-lg">TEST THIS DATE</button>
-                <div id="manual-error" class="hidden mt-4 text-red-500 text-sm text-center font-medium"></div>
+                <button onclick="runManualCalculation()" class="w-full bg-[#1e293b] hover:bg-black text-white py-4 sm:py-5 rounded-xl font-bold shadow-lg transition uppercase tracking-widest text-base sm:text-lg">TEST THIS DATE</button>
+                <div id="manual-error" class="hidden mt-4 text-red-500 text-xs text-center font-medium bg-red-50 p-2 rounded-lg"></div>
             </div>
 
-            <!-- ACTIVE TEST STATE -->
             <div id="state-active" class="hidden">
                 <div class="flex justify-between items-center mb-6">
                     <span id="timer" class="text-2xl font-bold text-orange-500 mono">0.0s</span>
@@ -97,18 +96,17 @@
                 </div>
                 <div id="date-display" class="date-text font-extrabold text-slate-800 mb-10 tracking-tighter">-- -- ----</div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <button onclick="checkAnswer(0)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Sun</button>
-                    <button onclick="checkAnswer(1)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Mon</button>
-                    <button onclick="checkAnswer(2)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Tue</button>
-                    <button onclick="checkAnswer(3)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Wed</button>
-                    <button onclick="checkAnswer(4)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Thu</button>
-                    <button onclick="checkAnswer(5)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Fri</button>
-                    <button onclick="checkAnswer(6)" class="bg-slate-100 hover:bg-blue-600 hover:text-white p-3 rounded-lg font-semibold transition">Sat</button>
-                    <button onclick="exitToMenu()" class="bg-slate-50 text-slate-400 p-3 rounded-lg font-semibold text-xs border border-slate-100 italic">Exit</button>
+                    <button onclick="checkAnswer(0)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Sun</button>
+                    <button onclick="checkAnswer(1)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Mon</button>
+                    <button onclick="checkAnswer(2)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Tue</button>
+                    <button onclick="checkAnswer(3)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Wed</button>
+                    <button onclick="checkAnswer(4)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Thu</button>
+                    <button onclick="checkAnswer(5)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Fri</button>
+                    <button onclick="checkAnswer(6)" class="bg-slate-100 active:bg-blue-600 active:text-white p-4 rounded-xl font-semibold transition touch-manipulation">Sat</button>
+                    <button onclick="exitToMenu()" class="bg-slate-50 text-slate-400 p-4 rounded-xl font-semibold text-xs border border-slate-100 italic touch-manipulation">Exit</button>
                 </div>
             </div>
 
-            <!-- RESULT BREAKDOWN STATE -->
             <div id="state-result" class="hidden">
                 <div id="feedback-icon" class="mb-2 text-5xl"></div>
                 <h2 id="feedback-text" class="text-xl font-bold mb-4"></h2>
@@ -130,7 +128,6 @@
         </div>
     </main>
 
-    <!-- HUB MODAL -->
     <div id="learning-modal" class="modal opacity-0 pointer-events-none fixed inset-0 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLearningHub()"></div>
         <div class="modal-container bg-white w-full max-w-lg rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[85vh]">
@@ -175,25 +172,19 @@
             'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 1600: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div>` },
             'N4': { title: 'N4: YY / 12', body: `<p>Number of times 12 goes into the last two digits of the year (YY).</p>` },
             'N5': { title: 'N5: Remainder', body: `<p>The remainder after dividing YY by 12 (YY % 12).</p>` },
-            'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into the remainder (N5).</p><div class="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs font-medium text-slate-500">Whole number of the number of times 4 goes into N5.</div>` },
+            'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into the remainder (N5).</p>` },
             'LEAP': { title: 'Leap Year Logic', body: `<p>Divisible by 4, except if YY is 00, unless CCYY is divisible by 400. Leap adjustments: Jan = 3, Feb = -1.</p>` },
-            'FINAL': { title: 'Final: Modulo 7', body: `<p>Add N1 through N6. Then find the remainder when divided by 7 (Modulo 7).</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>0: Sun</div><div>4: Thu</div><div>1: Mon</div><div>5: Fri</div><div>2: Tue</div><div>6: Sat</div><div>3: Wed</div></div><div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs"><p class="font-bold mb-1">Example:</p><p>If sum is 33, then 33 / 7 = 4 with remainder of 5 (33 % 7 = 5). Therefore, the Day is Friday.</p></div>` },
+            'FINAL': { title: 'Final: Modulo 7', body: `<p>Add N1 through N6. Then find the remainder when divided by 7 (Modulo 7).</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>0: Sun</div><div>4: Thu</div><div>1: Mon</div><div>5: Fri</div><div>2: Tue</div><div>6: Sat</div><div>3: Wed</div></div>` },
             'ABOUT': { 
                 title: 'About the Logic', 
                 body: `
                 <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
                     <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
-                    
                     <div class="italic space-y-2">
                         <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright. May be used or copied with attribution.</p>
                         <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
                     </div>
-
-                    <p>Jackie Dander came up with this method as the simplest memorization display method for performing Day of Week tricks in front of audiences. It is just figuring out 6 numbers.</p>
-                    
-                    <p>He thinks you can master the memorization in a few days if you have talent for memorizing lists. For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him!</p>
-                    
-                    <p>And smile when an audience member gives you an easy date. Such as July 4, 2400. As you will find out, that date can be resolved in 1 second as Tuesday. Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.</p>
+                    <p>Jackie Dander came up with this method as the simplest memorization display method for performing Day of Week tricks in front of audiences. It is just figuring out 6 numbers. He thinks you can master the memorization in a few days if you have talent for memorizing lists. For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! And smile when an audience member gives you an easy date. Such as July 4, 2400. As you will find out, that date can be resolved in 1 second as Tuesday. Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.</p>
                 </div>` 
             }
         };
@@ -205,7 +196,7 @@
 
         function calculateLogic(m, d, y) {
             const isLeap = isLeapYear(y);
-            const n1 = isLeap ? leapMonthValuesRef[m-1] : monthValuesRef[m-1];
+            const n1 = isLeap && m <= 2 ? (m === 1 ? 3 : -1) : monthValuesRef[m-1];
             const n2 = d;
             const cc = Math.floor(y / 100);
             const n3 = centuryPattern[cc % 4];
@@ -227,38 +218,19 @@
         }
 
         function exitToMenu() { clearInterval(timerInterval); hideStates(); document.getElementById('state-start').classList.remove('hidden'); }
-        
-        function showManualMode() { 
-            hideStates(); 
-            document.getElementById('manual-m').value = '';
-            document.getElementById('manual-d').value = '';
-            document.getElementById('manual-y').value = '';
-            document.getElementById('state-manual').classList.remove('hidden'); 
-        }
+        function showManualMode() { hideStates(); document.getElementById('manual-error').classList.add('hidden'); document.getElementById('state-manual').classList.remove('hidden'); }
 
         function startGame(manualParams = null) {
             let m, d, y;
-            if (manualParams) {
-                m = manualParams.m; d = manualParams.d; y = manualParams.y;
-            } else {
-                y = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
-                m = Math.floor(Math.random() * 12) + 1;
-                const daysInMonth = new Date(y, m, 0).getDate();
-                d = Math.floor(Math.random() * daysInMonth) + 1;
-            }
-
+            if (manualParams) { m = manualParams.m; d = manualParams.d; y = manualParams.y; }
+            else { y = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753; m = Math.floor(Math.random() * 12) + 1; d = Math.floor(Math.random() * 28) + 1; }
             currentData = { m, d, y, logic: calculateLogic(m, d, y) };
             hideStates();
             document.getElementById('state-active').classList.remove('hidden');
             document.getElementById('date-display').innerText = `${m}/${d}/${y}`;
-            
-            document.getElementById('timer').innerText = '0.0s';
             startTime = Date.now();
             clearInterval(timerInterval);
-            timerInterval = setInterval(() => { 
-                const elapsed = (Date.now() - startTime) / 1000;
-                document.getElementById('timer').innerText = elapsed.toFixed(1) + 's'; 
-            }, 100);
+            timerInterval = setInterval(() => { document.getElementById('timer').innerText = ((Date.now() - startTime) / 1000).toFixed(1) + 's'; }, 100);
         }
 
         function checkAnswer(userDOW) {
@@ -283,39 +255,25 @@
             const l = currentData.logic;
             document.getElementById('result-date-label').innerText = `CALC: ${currentData.m}/${currentData.d}/${currentData.y}`;
             document.getElementById('breakdown-content').innerHTML = `
-                <div class="flex justify-between"><span>N1 (Month${l.isLeap ? '*' : ''}):</span> <span class="text-blue-400 font-bold">${l.n1}</span></div>
+                <div class="flex justify-between"><span>N1 (Month):</span> <span class="text-blue-400 font-bold">${l.n1}</span></div>
                 <div class="flex justify-between"><span>N2 (Day):</span> <span class="text-blue-400 font-bold">${l.n2}</span></div>
                 <div class="flex justify-between"><span>N3 (Century):</span> <span class="text-blue-400 font-bold">${l.n3}</span></div>
-                <div class="flex justify-between"><span>N4 (YY / 12):</span> <span class="text-blue-400 font-bold">${l.n4}</span></div>
+                <div class="flex justify-between"><span>N4 (YY/12):</span> <span class="text-blue-400 font-bold">${l.n4}</span></div>
                 <div class="flex justify-between"><span>N5 (Rem):</span> <span class="text-blue-400 font-bold">${l.n5}</span></div>
-                <div class="flex justify-between"><span>N6 (N5 / 4):</span> <span class="text-blue-400 font-bold">${l.n6}</span></div>
+                <div class="flex justify-between"><span>N6 (N5/4):</span> <span class="text-blue-400 font-bold">${l.n6}</span></div>
             `;
-            document.getElementById('breakdown-sum').innerHTML = `
-                Sum: ${l.sum} &nbsp;|&nbsp; ${l.sum} % 7 = <span class="text-blue-400 font-bold">${l.dow} (${dowNames[l.dow].substring(0,3)})</span>
-            `;
+            document.getElementById('breakdown-sum').innerHTML = `Sum: ${l.sum} | ${l.sum} % 7 = ${l.dow}`;
         }
 
         function runManualCalculation() {
             const m = parseInt(document.getElementById('manual-m').value);
             const d = parseInt(document.getElementById('manual-d').value);
             const y = parseInt(document.getElementById('manual-y').value);
-            
-            if (!m || !d || !y || m < 1 || m > 12 || d < 1 || d > 31 || y < 1753 || y > 2799) {
-                const err = document.getElementById('manual-error');
-                err.innerText = "Please enter a valid date between 1753 and 2799.";
-                err.classList.remove('hidden');
+            if (!m || !d || !y || y < 1753 || y > 2799) {
+                document.getElementById('manual-error').innerText = "Enter valid date (1753-2799).";
+                document.getElementById('manual-error').classList.remove('hidden');
                 return;
             }
-
-            const dateCheck = new Date(y, m - 1, d);
-            if (dateCheck.getFullYear() !== y || dateCheck.getMonth() !== m - 1 || dateCheck.getDate() !== d) {
-                const err = document.getElementById('manual-error');
-                err.innerText = "That date does not exist in the calendar.";
-                err.classList.remove('hidden');
-                return;
-            }
-
-            document.getElementById('manual-error').classList.add('hidden');
             startGame({ m, d, y });
         }
 
@@ -329,13 +287,7 @@
 
         function openLearningHub() { document.getElementById('learning-modal').classList.remove('opacity-0', 'pointer-events-none'); backToHub(); }
         function closeLearningHub() { document.getElementById('learning-modal').classList.add('opacity-0', 'pointer-events-none'); }
-        function showTopic(id) {
-            document.getElementById('learning-modal').classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('hub-menu').classList.add('hidden');
-            document.getElementById('topic-detail').classList.remove('hidden');
-            document.getElementById('topic-title').innerText = topicContent[id].title;
-            document.getElementById('topic-body').innerHTML = topicContent[id].body;
-        }
+        function showTopic(id) { document.getElementById('hub-menu').classList.add('hidden'); document.getElementById('topic-detail').classList.remove('hidden'); document.getElementById('topic-title').innerText = topicContent[id].title; document.getElementById('topic-body').innerHTML = topicContent[id].body; document.getElementById('learning-modal').classList.remove('opacity-0', 'pointer-events-none'); }
         function backToHub() { document.getElementById('hub-menu').classList.remove('hidden'); document.getElementById('topic-detail').classList.add('hidden'); }
     </script>
 </body>
