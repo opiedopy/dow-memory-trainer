@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jackie Dander’s DOW Memory Trainer from: fuzzywidget.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains+Mono', monospace; }
+        .card { transition: all 0.3s ease; }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">DOW Memory Trainer</h1>
+            <p class="text-slate-600 italic">"Master the calendar in 30 seconds or less"</p>
+        </header>
+
+        <!-- Stats Board -->
+        <div id="stats-board" class="grid grid-cols-3 gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="text-center">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Accuracy</p>
+                <p id="stat-accuracy" class="text-xl font-bold text-blue-600">0%</p>
+            </div>
+            <div class="text-center border-x border-slate-100">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Time</p>
+                <p id="stat-avg" class="text-xl font-bold text-blue-600">0.0s</p>
+            </div>
+            <div class="text-center">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Best</p>
+                <p id="stat-best" class="text-xl font-bold text-green-600">--</p>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div id="game-card" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center card">
+            
+            <!-- Start State -->
+            <div id="state-start">
+                <div class="mb-6 py-10 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200">
+                    <p class="text-slate-500 font-medium">Choose your mode:</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg transform active:scale-95 transition">
+                        START RANDOM TEST
+                    </button>
+                    <button onclick="showManualMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-10 rounded-xl transition">
+                        MANUAL CALCULATION
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Mode State -->
+            <div id="state-manual" class="hidden text-left">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Manual Entry</h2>
+                    <button onclick="exitToMenu()" class="text-slate-400 hover:text-slate-600 text-sm">Cancel</button>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Month</label>
+                        <input type="number" id="manual-m" placeholder="MM" class="w-full p-3 border border-slate-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Day</label>
+                        <input type="number" id="manual-d" placeholder="DD" class="w-full p-3 border border-slate-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Year</label>
+                        <input type="number" id="manual-y" placeholder="CCYY" class="w-full p-3 border border-slate-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+                <button onclick="runManualCalculation()" class="w-full bg-slate-800 hover:bg-black text-white font-bold py-3 rounded-xl transition mb-4">
+                    CALCULATE
+                </button>
+                <div id="manual-error" class="hidden text-red-500 text-sm text-center mb-4"></div>
+            </div>
+
+            <!-- Active State -->
+            <div id="state-active" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="timer" class="text-2xl font-bold text-orange-500 mono">0.0s</span>
+                    <button onclick="exitToMenu()" class="text-slate-400 hover:text-slate-600 text-sm">Stop Test</button>
+                </div>
+                
+                <div id="date-display" class="text-4xl md:text-5xl font-extrabold text-slate-800 mb-8 py-4 tracking-tighter">
+                    -- -- ----
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+                    <button onclick="checkAnswer(0)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Sun</button>
+                    <button onclick="checkAnswer(1)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Mon</button>
+                    <button onclick="checkAnswer(2)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Tue</button>
+                    <button onclick="checkAnswer(3)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Wed</button>
+                    <button onclick="checkAnswer(4)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Thu</button>
+                    <button onclick="checkAnswer(5)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Fri</button>
+                    <button onclick="checkAnswer(6)" class="btn-day bg-slate-100 hover:bg-slate-200 p-3 rounded-lg font-semibold">Sat</button>
+                </div>
+            </div>
+
+            <!-- Result State -->
+            <div id="state-result" class="hidden">
+                <div id="feedback-icon" class="mb-4 text-5xl"></div>
+                <h2 id="feedback-text" class="text-2xl font-bold mb-2"></h2>
+                <p id="feedback-sub" class="text-slate-600 mb-6"></p>
+
+                <div id="breakdown-box" class="hidden mb-6 text-left bg-slate-900 text-slate-300 p-6 rounded-lg mono text-sm leading-relaxed">
+                    <h3 class="text-blue-400 font-bold mb-3 border-b border-slate-700 pb-1">Calculation Breakdown (N1-N6)</h3>
+                    <div id="breakdown-content"></div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button id="btn-next" onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg">Next Date</button>
+                    <button id="btn-show-breakdown" onclick="toggleBreakdown()" class="text-slate-500 hover:text-slate-800 text-sm font-medium">Show Calculation Details</button>
+                    <button id="btn-back-manual" onclick="showManualMode()" class="hidden text-slate-500 hover:text-slate-800 text-sm font-medium">Back to Manual Entry</button>
+                    <button onclick="exitToMenu()" class="text-slate-400 hover:text-slate-600 text-xs mt-2">Back to Main Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button id="btn-reset-stats" onclick="resetStats()" class="text-slate-400 hover:text-red-500 text-xs font-semibold uppercase tracking-widest transition">
+                Reset Series Stats
+            </button>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm font-medium">Created by Jackie Dander of <a href="https://fuzzywidget.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">fuzzywidget.com</a></p>
+            <p class="text-slate-400 text-[10px] mt-2 uppercase tracking-tighter">Gregorian Date Method (1753 - 2799)</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- CALCULATION ENGINE (Python Logic Port) ---
+        const monthValuesRef = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
+        const centuryList = [2, 0, 5, 3];
+        const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+        }
+
+        function getDOWLogic(m, d, y) {
+            let m_val = monthValuesRef[m - 1];
+            if (isLeapYear(y)) {
+                if (m === 1) m_val = 3;
+                if (m === 2) m_val = -1;
+            }
+
+            const centuryIndex = Math.floor(y / 100) % 4;
+            const c_val = centuryList[centuryIndex];
+
+            const yearLast2 = y % 100;
+            const y_div_12 = Math.floor(yearLast2 / 12);
+            const y_mod_12 = yearLast2 % 12;
+            const y_mod12_div4 = Math.floor(y_mod_12 / 4);
+
+            const sum = m_val + d + c_val + y_div_12 + y_mod_12 + y_mod12_div4;
+            let dow = sum % 7;
+            if (dow < 0) dow += 7;
+
+            return {
+                n1: m_val,
+                n2: d,
+                n3: c_val,
+                n4: y_div_12,
+                n5: y_mod_12,
+                n6: y_mod12_div4,
+                sum: sum,
+                dow: dow,
+                isLeap: isLeapYear(y)
+            };
+        }
+
+        // --- APP STATE ---
+        let currentData = null;
+        let startTime = 0;
+        let timerInterval = null;
+        let isManualMode = false;
+        let stats = {
+            total: 0,
+            correct: 0,
+            times: [],
+            best: Infinity
+        };
+
+        // --- UI CONTROLS ---
+        function updateStatsUI() {
+            const accuracy = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
+            const avg = stats.times.length === 0 ? 0 : (stats.times.reduce((a, b) => a + b, 0) / stats.times.length).toFixed(1);
+            
+            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('stat-avg').innerText = `${avg}s`;
+            document.getElementById('stat-best').innerText = stats.best === Infinity ? '--' : `${stats.best.toFixed(1)}s`;
+        }
+
+        function exitToMenu() {
+            clearInterval(timerInterval);
+            isManualMode = false;
+            document.getElementById('state-start').classList.remove('hidden');
+            document.getElementById('state-active').classList.add('hidden');
+            document.getElementById('state-manual').classList.add('hidden');
+            document.getElementById('state-result').classList.add('hidden');
+            document.getElementById('stats-board').classList.remove('hidden');
+            document.getElementById('btn-reset-stats').classList.remove('hidden');
+        }
+
+        function showManualMode() {
+            isManualMode = true;
+            document.getElementById('state-start').classList.add('hidden');
+            document.getElementById('state-active').classList.add('hidden');
+            document.getElementById('state-manual').classList.remove('hidden');
+            document.getElementById('state-result').classList.add('hidden');
+            document.getElementById('stats-board').classList.add('hidden');
+            document.getElementById('btn-reset-stats').classList.add('hidden');
+            document.getElementById('manual-error').classList.add('hidden');
+        }
+
+        function runManualCalculation() {
+            const m = parseInt(document.getElementById('manual-m').value);
+            const d = parseInt(document.getElementById('manual-d').value);
+            const y = parseInt(document.getElementById('manual-y').value);
+            const errorDiv = document.getElementById('manual-error');
+
+            if (isNaN(m) || isNaN(d) || isNaN(y)) {
+                errorDiv.innerText = "Please fill in all fields.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (y < 1753 || y > 2799) {
+                errorDiv.innerText = "Year must be between 1753 and 2799.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const daysInMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (m < 1 || m > 12 || d < 1 || d > daysInMonth[m-1]) {
+                errorDiv.innerText = "Invalid date for the given month/year.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            currentData = { m, d, y, logic: getDOWLogic(m, d, y) };
+            showResult(true, 0, true);
+        }
+
+        function startGame() {
+            isManualMode = false;
+            const year = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
+            const month = Math.floor(Math.random() * 12) + 1;
+            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            const day = Math.floor(Math.random() * daysInMonth[month-1]) + 1;
+
+            currentData = { m: month, d: day, y: year, logic: getDOWLogic(month, day, year) };
+
+            document.getElementById('state-start').classList.add('hidden');
+            document.getElementById('state-result').classList.add('hidden');
+            document.getElementById('state-active').classList.remove('hidden');
+            document.getElementById('stats-board').classList.remove('hidden');
+            document.getElementById('btn-reset-stats').classList.remove('hidden');
+
+            document.getElementById('date-display').innerText = `${month} / ${day} / ${year}`;
+            
+            startTime = Date.now();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('timer').innerText = `${elapsed.toFixed(1)}s`;
+            }, 100);
+        }
+
+        function checkAnswer(userDOW) {
+            clearInterval(timerInterval);
+            const elapsed = (Date.now() - startTime) / 1000;
+            const correct = userDOW === currentData.logic.dow;
+
+            stats.total++;
+            if (correct) {
+                stats.correct++;
+                stats.times.push(elapsed);
+                if (elapsed < stats.best) stats.best = elapsed;
+                showResult(true, elapsed);
+            } else {
+                showResult(false, elapsed);
+            }
+            updateStatsUI();
+        }
+
+        function showResult(isCorrect, time, manual = false) {
+            document.getElementById('state-active').classList.add('hidden');
+            document.getElementById('state-manual').classList.add('hidden');
+            document.getElementById('state-result').classList.remove('hidden');
+
+            const icon = document.getElementById('feedback-icon');
+            const text = document.getElementById('feedback-text');
+            const sub = document.getElementById('feedback-sub');
+            const btnNext = document.getElementById('btn-next');
+            const btnBackManual = document.getElementById('btn-back-manual');
+
+            if (manual) {
+                icon.innerText = "🗓️";
+                text.innerText = dowNames[currentData.logic.dow];
+                text.className = "text-3xl font-bold mb-2 text-slate-800";
+                sub.innerText = `Result for ${currentData.m}/${currentData.d}/${currentData.y}`;
+                btnNext.classList.add('hidden');
+                btnBackManual.classList.remove('hidden');
+                toggleBreakdown(true); // Always show details in manual mode
+            } else {
+                btnNext.classList.remove('hidden');
+                btnBackManual.classList.add('hidden');
+                toggleBreakdown(false); // Hide by default for random test
+                if (isCorrect) {
+                    icon.innerText = "🎯";
+                    text.innerText = "Correct!";
+                    text.className = "text-2xl font-bold mb-2 text-green-600";
+                    sub.innerText = `You nailed it in ${time.toFixed(1)} seconds.`;
+                } else {
+                    icon.innerText = "❌";
+                    text.innerText = "Not quite!";
+                    text.className = "text-2xl font-bold mb-2 text-red-600";
+                    sub.innerText = `The correct answer was ${dowNames[currentData.logic.dow]}.`;
+                }
+            }
+
+            const l = currentData.logic;
+            document.getElementById('breakdown-content').innerHTML = `
+                <p>N1 (Month): <span class="text-white">${l.n1}</span></p>
+                <p>N2 (Day): <span class="text-white">${l.n2}</span></p>
+                <p>N3 (Century): <span class="text-white">${l.n3}</span></p>
+                <p>N4 (Year/12): <span class="text-white">${l.n4}</span></p>
+                <p>N5 (Year%12): <span class="text-white">${l.n5}</span></p>
+                <p>N6 (Rem/4): <span class="text-white">${l.n6}</span></p>
+                <div class="mt-2 pt-2 border-t border-slate-700">
+                    <p>Total Sum: <span class="text-blue-400">${l.sum}</span></p>
+                    <p>Final: ${l.sum} % 7 = <span class="text-green-400 font-bold">${l.dow}</span></p>
+                </div>
+            `;
+        }
+
+        function toggleBreakdown(forceOpen) {
+            const box = document.getElementById('breakdown-box');
+            const btn = document.getElementById('btn-show-breakdown');
+            if (forceOpen === true || (forceOpen !== false && box.classList.contains('hidden'))) {
+                box.classList.remove('hidden');
+                btn.innerText = "Hide Details";
+            } else {
+                box.classList.add('hidden');
+                btn.innerText = "Show Calculation Details";
+            }
+        }
+
+        function resetStats() {
+            if (confirm("Clear all session progress and reset best time?")) {
+                stats = { total: 0, correct: 0, times: [], best: Infinity };
+                updateStatsUI();
+                exitToMenu();
+            }
+        }
+
+        window.onload = updateStatsUI;
+    </script>
+</body>
+</html>
