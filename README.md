@@ -51,3 +51,53 @@ Open it in any modern web browser.
 No installation or hosting required (it runs entirely client-side).
 
 Created by Jackie Dander | Visit fuzzywidget.com
+=============================
+Document follows, repeating some of the above:
+"""Day of Week (DOW) Calculation 
+(Years 1753 to 9999) (restriction is due to different calendars used prior to 1753 and the possible Revised Julian Calendar used after February 29, 2800)
+CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM, TODAY IS Dec 5, 2025 
+Copyright. May be used or copied with attribution. 
+For use by mental math or converting to micro python code for input: Month, day, year.
+Note: The python modulo operator is "%".  Example: 76%12 = 4 
+
+For example: What day of the week is February 29, 2052?
+1. Month = -1
+2. Day = 29
+3. “20” = century (CC) = 2
+4. “52” = year (YY/12) = 4
+5. “52” = year (YY%12) = 4
+6. “52” = year (integer of #5 answer /4) = 1
+
+Answer is (sum above or -1 + 29 + 2 + 4 + 4 + 1 = 39, and 39%7 = 4, so DOW = Thursday.
+""" 
+
+1. Month values   =  	 4,  0,  0,  3,  5,  1,  3,  6,  2,  4,  0,  2 
+But, if leap year:  = 	 3, -1,  0,  3,  5,  1,  3,  6,  2,  4,  0,  2 
+
+2. Day = day 
+
+3. century calculation values, (Note: 400 year repeating  
+centurylist = [2, 0, 5, 3] beginning with 1600.) 
+Example: 
+2000 is 2 
+2100 is 0 
+2200 is 5 
+2300 is 3 
+2400 is 2.  Etc etc 
+
+4. Integer of YY/12 
+
+5. Modulo = YY%12 
+
+6. Integer of (answer above)/4 
+_______________________ 
+
+Add 1 thru 6 = 
+
+Answer is (after modulo 7) = 
+
+0 1 2 3 4 5 6 
+
+Sun Mon Tue Wed Thu Fri Sat
+
+
