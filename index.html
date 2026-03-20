@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jackie Dander’s DOW Memory Trainer</title>
+    <title>Jackie Dander’s DOW Memory Trainer mar 19 ver1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap');
@@ -27,7 +27,7 @@
             <h1 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">DOW Memory Trainer</h1>
             <p class="text-xs text-slate-400 font-mono mb-4 italic">Logic by Jackie Dander • fuzzywidget.com</p>
             <div class="flex justify-center gap-4 text-sm font-medium">
-                <button onclick="exitToMenu()" class="text-blue-600 hover:underline">Home</button>
+                <button onclick="exitToMenu()" class="text-blue-600 hover:underline">Trainer Home</button>
                 <span class="text-slate-300">|</span>
                 <button onclick="openLearningHub()" class="text-blue-600 hover:underline">Learning</button>
                 <span class="text-slate-300">|</span>
@@ -35,25 +35,18 @@
             </div>
         </header>
 
-        <div id="stats-board" class="grid grid-cols-5 gap-1 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <div id="stats-board" class="grid grid-cols-3 gap-3 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
             <div class="text-center">
-                <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Tries</p>
-                <p id="stat-tries" class="text-lg font-bold text-slate-700">0</p>
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Accuracy</p>
+                <p id="stat-accuracy" class="text-lg font-bold text-blue-600">0%</p>
             </div>
             <div class="text-center border-x border-slate-100">
-                <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Correct</p>
-                <p id="stat-correct" class="text-lg font-bold text-blue-600">0</p>
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Avg Time</p>
+                <p id="stat-avg" class="text-lg font-bold text-blue-600">0.0s</p>
             </div>
-            <div class="text-center border-r border-slate-100">
-                <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Time</p>
-                <p id="stat-time" class="text-lg font-bold text-orange-500">--</p>
-            </div>
-            <div class="text-center border-r border-slate-100">
-                <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Best Time</p>
+            <div class="text-center">
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Best</p>
                 <p id="stat-best" class="text-lg font-bold text-green-600">--</p>
-            </div>
-            <div class="text-center flex flex-col justify-center">
-                <button onclick="resetStats()" class="text-[9px] font-bold text-red-500 uppercase tracking-wider hover:text-red-700 transition">Reset</button>
             </div>
         </div>
 
@@ -72,7 +65,7 @@
 
             <div id="state-manual" class="hidden text-left">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-slate-800">Manual Date</h2>
+                    <h2 class="text-xl font-bold text-slate-800">Manual Test</h2>
                     <div class="flex gap-3">
                         <button onclick="openLearningHub()" class="text-blue-500 text-xs font-bold uppercase tracking-tight hover:underline">View Learning</button>
                         <span class="text-slate-300">|</span>
@@ -130,7 +123,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition transform active:scale-95 text-sm uppercase">RANDOM DATE</button>
-                    <button onclick="showManualMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 px-4 rounded-xl transition transform active:scale-95 text-sm uppercase">MANUAL DATE</button>
+                    <button onclick="showManualMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 px-4 rounded-xl transition transform active:scale-95 text-sm uppercase">MANUAL TEST</button>
                 </div>
             </div>
         </div>
@@ -165,7 +158,7 @@
     </div>
 
     <footer class="py-6 mt-auto text-center">
-        <p class="text-slate-400 text-xs font-mono italic">© Jackie Dander | fuzzywidget.com</p>
+        <p class="text-slate-400 text-xs font-mono italic">© Jackie Dander | fuzzywidget.com | Ohms</p>
     </footer>
 
     <script>
@@ -177,28 +170,12 @@
         const topicContent = {
             'N1': { title: 'N1: Month Values', body: `<p>Values for Jan-Dec:</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>Jan: 4 (3*)</div><div>Jul: 3</div><div>Feb: 0 (-1*)</div><div>Aug: 6</div><div>Mar: 0</div><div>Sep: 2</div><div>Apr: 3</div><div>Oct: 4</div><div>May: 5</div><div>Nov: 0</div><div>Jun: 1</div><div>Dec: 2</div></div><p class="mt-2 text-xs italic">*Leap Year values (Jan/Feb only).</p>` },
             'N2': { title: 'N2: Day', body: `<p>The day of the month. Example: October 14th, N2 = 14.</p>` },
-            'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 2000: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div><p class='mt-2 text-xs italic'>For 1900s, value is 0. For 1800s, value is 2. For 1700s, value is 4 (or -3).</p>` },
+            'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 1600: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div>` },
             'N4': { title: 'N4: YY / 12', body: `<p>Number of times 12 goes into the last two digits of the year (YY).</p>` },
             'N5': { title: 'N5: Remainder', body: `<p>The remainder after dividing YY by 12 (YY % 12).</p>` },
             'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into the remainder (N5).</p>` },
             'LEAP': { title: 'Leap Year Logic', body: `<p>Divisible by 4, except if YY is 00, unless CCYY is divisible by 400. Leap adjustments: Jan = 3, Feb = -1.</p>` },
-            'FINAL': { 
-                title: 'Final: Modulo 7', 
-                body: `<div class="space-y-4 text-sm text-slate-700">
-                    <p class="font-bold">Add N1 through N6. Then find the remainder when divided by 7 (Modulo 7).</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg">
-                        <div>0: Sun</div><div>4: Thu</div>
-                        <div>1: Mon</div><div>5: Fri</div>
-                        <div>2: Tue</div><div>6: Sat</div>
-                        <div>3: Wed</div>
-                    </div>
-                    <p>Modulo is a math term, meaning to divide the second number into the first number and only use the remaining number. The math coded symbol for modulo is “%”.</p>
-                    <p>For example:<br>47 modulo 7 = 5<br>Or<br>47 % 7 = 5</p>
-                    <p>(Remember: 7 goes into 47 cleanly 6 times but leaves a remainder of 5. The 5 is the modulo answer.)</p>
-                    <p class="font-bold border-t pt-2 text-blue-600">The "Gully-Buster" Trick:</p>
-                    <p>You can apply modulo at any time! If your running sum hits 7, 14, or 21, just zero it out and keep going. This keeps your mental numbers small and fast.</p>
-                </div>` 
-            },
+            'FINAL': { title: 'Final: Modulo 7', body: `<p>Add N1 through N6. Then find the remainder when divided by 7 (Modulo 7).</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>0: Sun</div><div>4: Thu</div><div>1: Mon</div><div>5: Fri</div><div>2: Tue</div><div>6: Sat</div><div>3: Wed</div></div>` },
             'ABOUT': { 
                 title: 'About the Logic', 
                 body: `
@@ -206,18 +183,15 @@
                     <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
                     <div class="italic space-y-2">
                         <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright. May be used or copied with attribution.</p>
+                        <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
                     </div>
-                    <p>Jackie Dander developed this method as the simplest memorization display for mental math performances. At age 78, he finds it better brain exercise than crossword puzzles. Average time is 30 seconds—see if you can beat him!</p>
-                    <div class="pt-4 border-t border-slate-200 mt-4">
-                        <p class="font-bold text-slate-900">Contact Email</p>
-                        <a href="mailto:fuzzywidgetart@gmail.com" class="text-blue-600 hover:underline break-all">fuzzywidgetart@gmail.com</a>
-                    </div>
+                    <p>Jackie Dander came up with this method as the simplest memorization display method for performing Day of Week tricks in front of audiences. It is just figuring out 6 numbers. He thinks you can master the memorization in a few days if you have talent for memorizing lists. For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! And smile when an audience member gives you an easy date. Such as July 4, 2400. As you will find out, that date can be resolved in 1 second as Tuesday. Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.</p>
                 </div>` 
             }
         };
 
         let currentData = null, startTime = 0, timerInterval = null;
-        let stats = { total: 0, correct: 0, times: [], best: Infinity, lastTime: null };
+        let stats = { total: 0, correct: 0, times: [], best: Infinity };
 
         function isLeapYear(y) { return (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)); }
 
@@ -225,11 +199,8 @@
             const isLeap = isLeapYear(y);
             const n1 = isLeap && m <= 2 ? (m === 1 ? 3 : -1) : monthValuesRef[m-1];
             const n2 = d;
-            
-            // Refined N3 Century Logic
             const cc = Math.floor(y / 100);
             const n3 = centuryPattern[cc % 4];
-
             const yy = y % 100;
             const n4 = Math.floor(yy / 12);
             const n5 = yy % 12;
@@ -248,15 +219,7 @@
         }
 
         function exitToMenu() { clearInterval(timerInterval); hideStates(); document.getElementById('state-start').classList.remove('hidden'); }
-        
-        function showManualMode() { 
-            hideStates(); 
-            document.getElementById('manual-m').value = '';
-            document.getElementById('manual-d').value = '';
-            document.getElementById('manual-y').value = '';
-            document.getElementById('manual-error').classList.add('hidden'); 
-            document.getElementById('state-manual').classList.remove('hidden'); 
-        }
+        function showManualMode() { hideStates(); document.getElementById('manual-error').classList.add('hidden'); document.getElementById('state-manual').classList.remove('hidden'); }
 
         function startGame(manualParams = null) {
             let m, d, y;
@@ -273,22 +236,15 @@
 
         function checkAnswer(userDOW) {
             clearInterval(timerInterval);
-            const time = (Date.now() - startTime) / 1000;
-            stats.lastTime = time; // Updated: Logic records time regardless of correctness
-            
             const isCorrect = userDOW === currentData.logic.dow;
-            stats.total++; 
+            stats.total++;
             if (isCorrect) {
                 stats.correct++;
+                const time = (Date.now() - startTime) / 1000;
                 stats.times.push(time);
                 if (time < stats.best) stats.best = time;
             }
             showResult(isCorrect);
-            updateStatsUI();
-        }
-
-        function resetStats() {
-            stats = { total: 0, correct: 0, times: [], best: Infinity, lastTime: null };
             updateStatsUI();
         }
 
@@ -323,9 +279,10 @@
         }
 
         function updateStatsUI() {
-            document.getElementById('stat-tries').innerText = stats.total;
-            document.getElementById('stat-correct').innerText = stats.correct;
-            document.getElementById('stat-time').innerText = stats.lastTime ? stats.lastTime.toFixed(1) + 's' : '--';
+            const acc = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
+            const avg = stats.times.length === 0 ? 0 : (stats.times.reduce((a, b) => a + b, 0) / stats.times.length).toFixed(1);
+            document.getElementById('stat-accuracy').innerText = acc + '%';
+            document.getElementById('stat-avg').innerText = avg + 's';
             document.getElementById('stat-best').innerText = stats.best === Infinity ? '--' : stats.best.toFixed(1) + 's';
         }
 
