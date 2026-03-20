@@ -286,7 +286,7 @@
         function checkAnswer(userDOW) {
             clearInterval(timerInterval);
             const time = (Date.now() - startTime) / 1000;
-            stats.lastTime = time; // Always record the last elapsed time
+            stats.lastTime = time; 
             
             const isCorrect = userDOW === currentData.logic.dow;
             stats.total++; 
@@ -310,7 +310,7 @@
             document.getElementById('feedback-icon').innerText = isCorrect ? "🎯" : "❌";
             document.getElementById('feedback-text').innerText = isCorrect ? "Correct!" : `Result: ${dowNames[currentData.logic.dow]}`;
             const l = currentData.logic;
-            document.getElementById('result-date-label').innerText = `${currentData.m}/${currentData.d}/${currentData.y}`;
+            document.getElementById('result-date-label').innerText = `${currentData.m}/${currentData.d}/${currentData.y} - ${dowNames[l.dow]}`;
             document.getElementById('breakdown-content').innerHTML = `
                 <div class="flex justify-between"><span>N1 (Month):</span> <span class="text-blue-400 font-bold">${l.n1}</span></div>
                 <div class="flex justify-between"><span>N2 (Day):</span> <span class="text-blue-400 font-bold">${l.n2}</span></div>
