@@ -12,7 +12,7 @@ This project was built collaboratively using Gemini Canvas. In just one session,
 
 🧠 The Logic (The "Jackie Dander" Method)
 
-The trainer uses a streamlined Gregorian calculation engine. It breaks down any date into six key variables ($N1$ through $N6$):
+The trainer uses a streamlined Gregorian calculation engine. It breaks down any date into six key variables (N1 through N6):
 
 N1: Month Reference Value (adjusted for leap years)
 
@@ -28,7 +28,7 @@ N6: Remainder quotient (N5 / 4)
 
 Final Calculation: 
 
-$$(N1 + N2 + N3 + N4 + N5 + N6) \mod 7$$
+(N1 + N2 + N3 + N4 + N5 + N6) \mod 7
 
 The result (0-6) corresponds to Sunday through Saturday.
 
