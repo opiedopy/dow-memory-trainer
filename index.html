@@ -228,18 +228,7 @@
             
             // Refined N3 Century Logic
             const cc = Math.floor(y / 100);
-            let n3;
-            if (cc >= 20) {
-                n3 = centuryPattern[cc % 4];
-            } else if (cc === 19) {
-                n3 = 0;
-            } else if (cc === 18) {
-                n3 = 2;
-            } else if (cc === 17) {
-                n3 = 4;
-            } else {
-                n3 = 0; // Fallback
-            }
+            const n3 = centuryPattern[cc % 4];
 
             const yy = y % 100;
             const n4 = Math.floor(yy / 12);
