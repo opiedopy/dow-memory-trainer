@@ -8,7 +8,7 @@ A high-performance, responsive web application designed to help users master the
 
 🚀 The Story
 
-This project was built collaboratively using Gemini Canvas. In just one session, we transformed a logical Python-based algorithm into a polished, mobile-friendly interactive trainer.
+This project was built collaboratively using Gemini Canvas. In just one session, we transformed my own logical Python-based algorithm into a polished, mobile-friendly interactive trainer.
 
 🧠 The Logic (The "Jackie Dander" Method)
 
