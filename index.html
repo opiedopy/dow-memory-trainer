@@ -177,7 +177,7 @@
         const topicContent = {
             'N1': { title: 'N1: Month Values', body: `<p>Values for Jan-Dec:</p><div class="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>Jan: 4 (3*)</div><div>Jul: 3</div><div>Feb: 0 (-1*)</div><div>Aug: 6</div><div>Mar: 0</div><div>Sep: 2</div><div>Apr: 3</div><div>Oct: 4</div><div>May: 5</div><div>Nov: 0</div><div>Jun: 1</div><div>Dec: 2</div></div><p class="mt-2 text-xs italic">*Leap Year values (Jan/Feb only).</p>` },
             'N2': { title: 'N2: Day', body: `<p>The day of the month. Example: October 14th, N2 = 14.</p>` },
-            'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 1600: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div>` },
+            'N3': { title: 'N3: Century Value', body: `<p>Century values repeat every 400 years starting with 2000: [2, 0, 5, 3].</p><div class="grid grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-3 rounded-lg"><div>2000s: 2</div><div>2400s: 2</div><div>2100s: 0</div><div>2500s: 0</div><div>2200s: 5</div><div>2600s: 5</div><div>2300s: 3</div><div>2700s: 3</div></div><p class='mt-2 text-xs italic'>For 1900s, value is 0. For 1800s, value is 2. For 1700s, value is 4 (or -3).</p>` },
             'N4': { title: 'N4: YY / 12', body: `<p>Number of times 12 goes into the last two digits of the year (YY).</p>` },
             'N5': { title: 'N5: Remainder', body: `<p>The remainder after dividing YY by 12 (YY % 12).</p>` },
             'N6': { title: 'N6: N5 / 4', body: `<p>Whole number of times 4 goes into the remainder (N5).</p>` },
@@ -192,25 +192,11 @@
                         <div>2: Tue</div><div>6: Sat</div>
                         <div>3: Wed</div>
                     </div>
-                    <p>(Modulo is a math term, meaning to divide the second number into the first number and only use the remaining number. The math coded symbol for modulo is “%”.</p>
+                    <p>Modulo is a math term, meaning to divide the second number into the first number and only use the remaining number. The math coded symbol for modulo is “%”.</p>
                     <p>For example:<br>47 modulo 7 = 5<br>Or<br>47 % 7 = 5</p>
-                    <p>(Remember: 7 goes into 47 cleanly 6 times but leaves a remainder of 5. The 5 is the modulo answer to the question 47 % 7)</p>
-                    <p class="font-bold border-t pt-2">Special hint to greatly speed up your math.</p>
-                    <p>As a reward to anyone who has gotten into my app so far as to be reading this message, here is a gully-buster skill! You have learned that the final step is to expose your sum of the 6 numbers to modulo 7, right? Well, the skill, or maybe we should call it a trick, is to understand that this modulo function can be applied at any time during the number gathering process.</p>
-                    <p>For example, July 4. July’s N1 number is 3. The day N2 number is 4. You immediately can get rid of N1 + N2 because the sum is 7. And 7 modulo 7 is zero.</p>
-                    <p>Another example: “The 7th, 14th, 21st, or 28th of any month can be ignored since they are zero also after modulo 7. </p>
-                    <p>Another example: the 20th century is N3 = 2. So, if N1 + N2 = 5, 12, 19 etc, then N1 + N2 + N3 = zero after modulo 7. Get it?</p>
-                    <p>November 19, 2017 logic adds up the N1 + N2 + N3 numbers to zero after modulo 7, so at that point you wipe your brain totally clean and you only have N4 + N5 + N6 to work on.</p>
-                    <p>Summary, any time you get a runninig sum that is a 7, 14, or 21, then zero them at that point and go on.</p>
-                    <p>So, as a test, how long would it take you to answer an audience’s randon date question, “What day of the week is March 21, 2248?”</p>
-                    <p>Answer: Your mind says, “March is N1 = zero. 21 is N2 = zero. 22nd century is N3 = 5. 48 is N4 = 4. N5 = 0. N6 = 0. Sum of N1-6 is 9, day of the week is Tuesday.</p>
-                    <p>For me that took X seconds. (I don’t want to brag…) (Ok, I’ll brag, it took me 8 seconds and you should be able to beat me…)</p>
-                    <p class="font-bold border-t pt-2">Super special hint to my reader:</p>
-                    <p>This may be the most useful hint of all, because it is something very useful in your real life.</p>
-                    <p>What days of the week are going to impact you the most, going forward? Yes, this year, next year and maybe the year that follows. So, as I write this that would be 2026, 2027 and 2028. So, I memorize N3 + N4 + N5 + N6 for those years.</p>
-                    <p>And:<br>2026 totals for N3/4/5/6 = 6<br>2027 totals for N3/4/5/6 = 0<br>2028 totals for N3/4/5/6 = 2</p>
-                    <p>Wow! That speeds things up and is very useful. If your birthday is September 6th, then you know that your birthday falls on Sunday this year, Monday next year, and Wednesday in 2028. (N1 = 2, N2 + 6, so sum so far is 8. Then add 8 to the three memorized numbers above, and modulo the sum by 7.)</p>
-                    <p>One more: You go to the doctor this year. All is good but he wants to see you on Thursday the 25 of June, next year, 2027. You immediaelty remember that for 2027 N3/4/5/6= 0, so you juast add N1 + N2 = 26, and you know that day is actually a Friday, so you tell the nurse her error. She does a double-take and wonders how in the heck did the patient know that????</p>
+                    <p>(Remember: 7 goes into 47 cleanly 6 times but leaves a remainder of 5. The 5 is the modulo answer.)</p>
+                    <p class="font-bold border-t pt-2 text-blue-600">The "Gully-Buster" Trick:</p>
+                    <p>You can apply modulo at any time! If your running sum hits 7, 14, or 21, just zero it out and keep going. This keeps your mental numbers small and fast.</p>
                 </div>` 
             },
             'ABOUT': { 
@@ -220,12 +206,11 @@
                     <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
                     <div class="italic space-y-2">
                         <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright. May be used or copied with attribution.</p>
-                        <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
                     </div>
-                    <p>Jackie Dander came up with this method as the simplest memorization display method for performing Day of Week tricks in front of audiences. It is just figuring out 6 numbers. He thinks you can master the memorization in a few days if you have talent for memorizing lists. For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! And smile when an audience member gives you an easy date. Such as July 4, 2400. As you will find out, that date can be resolved in 1 second as Tuesday. Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.</p>
+                    <p>Jackie Dander developed this method as the simplest memorization display for mental math performances. At age 78, he finds it better brain exercise than crossword puzzles. Average time is 30 seconds—see if you can beat him!</p>
                     <div class="pt-4 border-t border-slate-200 mt-4">
                         <p class="font-bold text-slate-900">Contact Email</p>
-                        <a href="mailto:fuzzywidgetart@gmail.com?subject=Inquiry%20from%20FuzzyWidget%20Website" class="text-blue-600 hover:underline break-all">fuzzywidgetart@gmail.com</a>
+                        <a href="mailto:fuzzywidgetart@gmail.com" class="text-blue-600 hover:underline break-all">fuzzywidgetart@gmail.com</a>
                     </div>
                 </div>` 
             }
@@ -240,8 +225,22 @@
             const isLeap = isLeapYear(y);
             const n1 = isLeap && m <= 2 ? (m === 1 ? 3 : -1) : monthValuesRef[m-1];
             const n2 = d;
+            
+            // Refined N3 Century Logic
             const cc = Math.floor(y / 100);
-            const n3 = centuryPattern[cc % 4];
+            let n3;
+            if (cc >= 20) {
+                n3 = centuryPattern[cc % 4];
+            } else if (cc === 19) {
+                n3 = 0;
+            } else if (cc === 18) {
+                n3 = 2;
+            } else if (cc === 17) {
+                n3 = 4;
+            } else {
+                n3 = 0; // Fallback
+            }
+
             const yy = y % 100;
             const n4 = Math.floor(yy / 12);
             const n5 = yy % 12;
@@ -286,7 +285,7 @@
         function checkAnswer(userDOW) {
             clearInterval(timerInterval);
             const time = (Date.now() - startTime) / 1000;
-            stats.lastTime = time; // Always record the last elapsed time
+            stats.lastTime = time; // Updated: Logic records time regardless of correctness
             
             const isCorrect = userDOW === currentData.logic.dow;
             stats.total++; 
