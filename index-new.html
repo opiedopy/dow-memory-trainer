@@ -35,23 +35,27 @@
             </div>
         </header>
 
-        <div id="stats-board" class="grid grid-cols-4 gap-2 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <div class="text-center">
-                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tries</p>
-                <p id="stat-tries" class="text-lg font-bold text-slate-700">0</p>
-            </div>
-            <div class="text-center border-x border-slate-100">
-                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Correct</p>
-                <p id="stat-correct" class="text-lg font-bold text-blue-600">0</p>
-            </div>
-            <div class="text-center border-r border-slate-100">
-                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Best</p>
-                <p id="stat-best" class="text-lg font-bold text-green-600">--</p>
-            </div>
-            <div class="text-center flex flex-col justify-center">
-                <button onclick="resetStats()" class="text-[10px] font-bold text-red-500 uppercase tracking-wider hover:text-red-700 transition">Reset</button>
-            </div>
-        </div>
+        <div id="stats-board" class="grid grid-cols-5 gap-1 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+    <div class="text-center">
+        <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Tries</p>
+        <p id="stat-tries" class="text-lg font-bold text-slate-700">0</p>
+    </div>
+    <div class="text-center border-x border-slate-100">
+        <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Correct</p>
+        <p id="stat-correct" class="text-lg font-bold text-blue-600">0</p>
+    </div>
+    <div class="text-center border-r border-slate-100">
+        <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Time</p>
+        <p id="stat-last-time" class="text-lg font-bold text-orange-500">--</p>
+    </div>
+    <div class="text-center border-r border-slate-100">
+        <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Best Time</p>
+        <p id="stat-best" class="text-lg font-bold text-green-600">--</p>
+    </div>
+    <div class="text-center flex flex-col justify-center">
+        <button onclick="resetStats()" class="text-[9px] font-bold text-red-500 uppercase tracking-wider hover:text-red-700 transition">Reset</button>
+    </div>
+</div>
 
         <div id="game-card" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 text-center card-anim relative overflow-hidden min-h-[340px] flex flex-col justify-center">
             
@@ -228,7 +232,37 @@
         };
 
         let currentData = null, startTime = 0, timerInterval = null;
-        let stats = { total: 0, correct: 0, times: [], best: Infinity };
+        let stats = { total: 0, correct: 0, times: [], best: Infinity, lastTime: null };
+
+function checkAnswer(userDOW) {
+    clearInterval(timerInterval);
+    const time = (Date.now() - startTime) / 1000;
+    stats.lastTime = time; // Capture the time regardless of correct/incorrect
+    
+    const isCorrect = userDOW === currentData.logic.dow;
+    stats.total++; 
+    
+    if (isCorrect) {
+        stats.correct++;
+        stats.times.push(time);
+        if (time < stats.best) stats.best = time;
+    }
+    
+    showResult(isCorrect);
+    updateStatsUI();
+}
+
+function updateStatsUI() {
+    document.getElementById('stat-tries').innerText = stats.total;
+    document.getElementById('stat-correct').innerText = stats.correct;
+    document.getElementById('stat-last-time').innerText = stats.lastTime ? stats.lastTime.toFixed(1) + 's' : '--';
+    document.getElementById('stat-best').innerText = stats.best === Infinity ? '--' : stats.best.toFixed(1) + 's';
+}
+
+function resetStats() {
+    stats = { total: 0, correct: 0, times: [], best: Infinity, lastTime: null };
+    updateStatsUI();
+}
 
         function isLeapYear(y) { return (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)); }
 
