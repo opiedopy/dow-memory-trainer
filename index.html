@@ -10,7 +10,6 @@
         body { font-family: 'Inter', sans-serif; }
         .hidden { display: none; }
 
-        /* FIX 4: 7-button grid — Sunday through Saturday in a clean layout */
         .day-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -21,7 +20,6 @@
                 grid-template-columns: repeat(4, 1fr);
             }
         }
-        /* Sunday gets full width on its own row to avoid orphan */
         .btn-day-sunday {
             grid-column: 1 / -1;
         }
@@ -34,18 +32,50 @@
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
         .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
 
-        /* FIX 1: Learning buttons — proper buttons, no underline */
+        /* Learning card buttons */
         .learn-btn {
-            @apply bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-sm transition-all text-center cursor-pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+            color: white;
+            border-radius: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.18);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            width: 100%;
         }
         .learn-btn:hover {
-            @apply -translate-y-1 shadow-md;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(99,102,241,0.28);
         }
         .learn-btn:active {
-            @apply scale-95 translate-y-0;
+            transform: scale(0.97) translateY(0);
+        }
+        .learn-btn-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            opacity: 0.82;
+            margin-bottom: 0.25rem;
+        }
+        .learn-btn-label {
+            font-size: 1.08rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .learn-btn-hint {
+            font-size: 0.72rem;
+            margin-top: 0.35rem;
+            opacity: 0.72;
+            font-style: italic;
+            line-height: 1.35;
         }
 
-        /* FIX 7: Mobile breakdown row alignment */
         .breakdown-row {
             display: flex;
             justify-content: space-between;
@@ -106,16 +136,56 @@
 
         <div id="page-learning" class="page-content hidden">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard</h2>
-            <!-- FIX 1: Proper buttons, no underline. FIX 2: Leap Year and Sum Modulo 7 positions swapped -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onclick="showLearnDetail('n1')" class="learn-btn">N1 - Month</button>
-                <button onclick="showLearnDetail('n2')" class="learn-btn">N2 - Day</button>
-                <button onclick="showLearnDetail('n3')" class="learn-btn">N3 - Century</button>
-                <button onclick="showLearnDetail('n4')" class="learn-btn">N4 - YY/12</button>
-                <button onclick="showLearnDetail('n5')" class="learn-btn">N5 - YY/12 Modulo</button>
-                <button onclick="showLearnDetail('n6')" class="learn-btn">N6 - N5 #/4</button>
-                <button onclick="showLearnDetail('sum')" class="learn-btn">Sum Modulo 7</button>
-                <button onclick="showLearnDetail('leap')" class="learn-btn">Leap Year Rules</button>
+
+                <button onclick="showLearnDetail('n1')" class="learn-btn">
+                    <span class="learn-btn-title">Step 1</span>
+                    <span class="learn-btn-label">N1 &mdash; Month</span>
+                    <span class="learn-btn-hint">Look up your month's anchor number (adjusts for leap years in Jan &amp; Feb)</span>
+                </button>
+
+                <button onclick="showLearnDetail('n2')" class="learn-btn">
+                    <span class="learn-btn-title">Step 2</span>
+                    <span class="learn-btn-label">N2 &mdash; Day</span>
+                    <span class="learn-btn-hint">Simply the day of the month as-is (e.g. the 15th &rarr; N2 = 15)</span>
+                </button>
+
+                <button onclick="showLearnDetail('n3')" class="learn-btn">
+                    <span class="learn-btn-title">Step 3</span>
+                    <span class="learn-btn-label">N3 &mdash; Century</span>
+                    <span class="learn-btn-hint">Repeating 2, 0, 5, 3 sequence based on the century (1600s, 1700s&hellip;)</span>
+                </button>
+
+                <button onclick="showLearnDetail('n4')" class="learn-btn">
+                    <span class="learn-btn-title">Step 4</span>
+                    <span class="learn-btn-label">N4 &mdash; YY &divide; 12</span>
+                    <span class="learn-btn-hint">Divide the last 2 digits of the year by 12, keep only the whole number</span>
+                </button>
+
+                <button onclick="showLearnDetail('n5')" class="learn-btn">
+                    <span class="learn-btn-title">Step 5</span>
+                    <span class="learn-btn-label">N5 &mdash; YY &divide; 12 Modulo</span>
+                    <span class="learn-btn-hint">The remainder left over after dividing the last 2 year digits by 12</span>
+                </button>
+
+                <button onclick="showLearnDetail('n6')" class="learn-btn">
+                    <span class="learn-btn-title">Step 6</span>
+                    <span class="learn-btn-label">N6 &mdash; N5 &divide; 4</span>
+                    <span class="learn-btn-hint">Divide your N5 result by 4, keep only the whole number</span>
+                </button>
+
+                <button onclick="showLearnDetail('sum')" class="learn-btn">
+                    <span class="learn-btn-title">Final Step</span>
+                    <span class="learn-btn-label">Sum Modulo 7</span>
+                    <span class="learn-btn-hint">Add N1&ndash;N6, divide by 7, and the remainder reveals the day of week</span>
+                </button>
+
+                <button onclick="showLearnDetail('leap')" class="learn-btn" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); box-shadow: 0 2px 8px rgba(20,184,166,0.18);">
+                    <span class="learn-btn-title">Reference</span>
+                    <span class="learn-btn-label">Leap Year Rules</span>
+                    <span class="learn-btn-hint">Div by 4 = leap; except centuries, unless also div by 400</span>
+                </button>
+
             </div>
         </div>
 
@@ -133,7 +203,6 @@
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center mb-8">
                 <h2 id="display-date" class="text-4xl font-black text-gray-800 tracking-tight">--</h2>
             </div>
-            <!-- FIX 4: 7-button grid so Saturday is not orphaned -->
             <div class="day-grid">
                 <button onclick="submitAnswer(0)" class="btn-day btn-day-sunday">Sunday</button>
                 <button onclick="submitAnswer(1)" class="btn-day">Monday</button>
@@ -160,7 +229,6 @@
                         </select>
                         <input id="input-year" type="number" min="1753" max="2799" placeholder="Year" oninput="checkManualReady()" class="border p-3 rounded w-full">
                     </div>
-                    <!-- FIX 2: Date validation error message -->
                     <p id="manual-error" class="text-red-600 text-sm font-medium hidden"></p>
                     <button id="btn-manual-test" disabled onclick="startManualTest()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed">START TEST</button>
                 </div>
@@ -175,7 +243,6 @@
             </div>
             <div class="bg-white p-6 rounded-xl shadow-inner border">
                 <h3 class="font-bold border-b pb-2 mb-4 text-gray-500">Calculation Breakdown:</h3>
-                <!-- FIX 7: breakdown-row class for consistent mobile alignment -->
                 <div class="grid grid-cols-1 gap-0 text-sm font-mono" id="breakdown-list"></div>
             </div>
             <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
@@ -197,7 +264,6 @@
                <p>For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! </p>
                <p>And smile when an audience member gives you an easy date, such as July 4, 2400. As you will find out, that date can be resolved in 3 seconds as Tuesday. </p>
                <p>Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that. Bonus golly-whacker Hint: As you will find out,</p>
-               <!-- FIX 6: Fixed "willl" typo -->
                <p>the last step is to "modulo 7" but the super hint is that you can modulo-7 along the way anytime your addition gets to 7, 14, 21, 28, 35, etc, etc. That means if your date is </p>
                <p>December 26, then N1 + N2 = 28 and that's zero after modulo 7 so note the zero and go on to N3-4-5-6 to finish calculations.</p>      
         
@@ -223,7 +289,6 @@
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0, isActive: false, manualPreTimerInterval: null };
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-        // FIX 3: N1 month table — each month on its own row, no slashes
         const learnData = {
             n1: `<h3 class="text-xl font-bold mb-4">N1 - Month Correlation</h3>
                  <p class="mb-4">Each month has a designated anchor number. However, in <strong>Leap Years</strong>, January and February change.</p>
@@ -291,7 +356,6 @@
             return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
         }
 
-        // FIX 2: Date validation helper
         function daysInMonth(month, year) {
             return new Date(year, month, 0).getDate();
         }
@@ -331,17 +395,33 @@
         function checkManualReady() {
             const m = parseInt(document.getElementById('input-month').value);
             const d = parseInt(document.getElementById('input-day').value);
-            const y = parseInt(document.getElementById('input-year').value);
+            const yRaw = document.getElementById('input-year').value.trim();
+            const y = parseInt(yRaw);
             const btn = document.getElementById('btn-manual-test');
             const errEl = document.getElementById('manual-error');
 
-            const allFilled = m && d && y >= 1753 && y <= 2799;
+            // Reset error state first
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
 
-            // FIX 2: Validate the day is valid for the chosen month/year
-            if (allFilled) {
-                const maxDay = daysInMonth(m, y);
-                if (d > maxDay) {
-                    errEl.textContent = `Invalid date: ${['January','February','March','April','May','June','July','August','September','October','November','December'][m-1]} ${y} only has ${maxDay} days.`;
+            // Year range check (show error as soon as something is typed)
+            if (yRaw !== '') {
+                if (isNaN(y)) {
+                    errEl.textContent = 'Please enter a valid year.';
+                    errEl.classList.remove('hidden');
+                    btn.disabled = true;
+                    btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
+                    return;
+                }
+                if (y < 1753) {
+                    errEl.textContent = 'Year must be 1753 or later. (Before 1753, the Julian calendar was in use.)';
+                    errEl.classList.remove('hidden');
+                    btn.disabled = true;
+                    btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
+                    return;
+                }
+                if (y > 2799) {
+                    errEl.textContent = 'Year must be 2799 or earlier. (After 2799, the Gregorian and Revised Julian calendars diverge.)';
                     errEl.classList.remove('hidden');
                     btn.disabled = true;
                     btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
@@ -349,8 +429,20 @@
                 }
             }
 
-            errEl.classList.add('hidden');
-            errEl.textContent = '';
+            const allFilled = m && d && yRaw !== '' && !isNaN(y) && y >= 1753 && y <= 2799;
+
+            // Day-in-month validation
+            if (allFilled) {
+                const maxDay = daysInMonth(m, y);
+                if (d > maxDay) {
+                    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                    errEl.textContent = `Invalid date: ${monthNames[m-1]} ${y} only has ${maxDay} days.`;
+                    errEl.classList.remove('hidden');
+                    btn.disabled = true;
+                    btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
+                    return;
+                }
+            }
 
             if (allFilled) {
                 btn.disabled = false;
@@ -396,7 +488,6 @@
             document.getElementById('result-date').innerText = `${currentTest.month}/${currentTest.day}/${currentTest.year}`;
             document.getElementById('result-time').innerText = `Elapsed Time: ${totalTime.toFixed(2)}s`;
 
-            // FIX 7: Use breakdown-row class for mobile alignment
             document.getElementById('breakdown-list').innerHTML = `
                 <div class="breakdown-row"><span>N1: Month</span><span>${res.n1}</span></div>
                 <div class="breakdown-row"><span>N2: Day</span><span>${res.n2}</span></div>
@@ -420,11 +511,13 @@
             document.getElementById('input-month').value = "";
             document.getElementById('input-day').value = "";
             document.getElementById('input-year').value = "";
+            const errEl = document.getElementById('manual-error');
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
             currentTest.preTime = 0;
             checkManualReady();
         }
 
-        // FIX 5: Keyboard support — press 0-6 to submit a day answer
         document.addEventListener('keydown', function(e) {
             const testPage = document.getElementById('page-test');
             if (!testPage.classList.contains('hidden')) {
