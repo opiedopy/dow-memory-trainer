@@ -11,9 +11,19 @@
         .hidden { display: none; }
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
         .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
-        .learn-btn { @apply bg-white border-2 border-indigo-100 hover:border-indigo-500 hover:bg-indigo-50 p-4 rounded-xl shadow-sm transition-all text-left flex flex-col; }
+        
+        /* Updated Learning Buttons with Hover and Click effects */
+        .learn-btn { 
+            @apply bg-white border-2 border-indigo-100 p-4 rounded-xl shadow-sm transition-all text-left flex flex-col cursor-pointer; 
+        }
+        .learn-btn:hover { 
+            @apply border-indigo-500 bg-indigo-50 -translate-y-1 shadow-md; 
+        }
+        .learn-btn:active {
+            @apply scale-95 translate-y-0;
+        }
         .learn-btn span:first-child { @apply text-indigo-600 font-bold text-lg; }
-        .learn-btn span:last-child { @apply text-gray-500 text-xs mt-1 uppercase tracking-wider; }
+        .learn-btn span:last-child { @apply text-gray-400 text-[10px] uppercase tracking-wider mt-1 font-semibold; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -63,21 +73,21 @@
         <div id="page-learning" class="page-content hidden">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onclick="showLearnDetail('n1')" class="learn-btn"><span>N1 - Month</span></button>
-                <button onclick="showLearnDetail('n2')" class="learn-btn"><span>N2 - Day</span></button>
-                <button onclick="showLearnDetail('n3')" class="learn-btn"><span>N3 - Century</span></button>
-                <button onclick="showLearnDetail('n4')" class="learn-btn"><span>N4 - YY/12</span></button>
-                <button onclick="showLearnDetail('n5')" class="learn-btn"><span>N5 - YY/12 Modulo</span></button>
-                <button onclick="showLearnDetail('n6')" class="learn-btn"><span>N6 - N5 #/4</span></button>
-                <button onclick="showLearnDetail('leap')" class="learn-btn"><span>Leap Year Rules</span></button>
-                <button onclick="showLearnDetail('sum')" class="learn-btn"><span>Sum Modulo 7</span></button>
+                <button onclick="showLearnDetail('n1')" class="learn-btn"><span>N1 - Month</span><span>Reference Table</span></button>
+                <button onclick="showLearnDetail('n2')" class="learn-btn"><span>N2 - Day</span><span>Day Number</span></button>
+                <button onclick="showLearnDetail('n3')" class="learn-btn"><span>N3 - Century</span><span>Century Sequence</span></button>
+                <button onclick="showLearnDetail('n4')" class="learn-btn"><span>N4 - YY/12</span><span>Integer Result</span></button>
+                <button onclick="showLearnDetail('n5')" class="learn-btn"><span>N5 - YY/12 Modulo</span><span>Remainder Result</span></button>
+                <button onclick="showLearnDetail('n6')" class="learn-btn"><span>N6 - N5 #/4</span><span>Integer Result</span></button>
+                <button onclick="showLearnDetail('leap')" class="learn-btn"><span>Leap Year Rules</span><span>Calculation Shift</span></button>
+                <button onclick="showLearnDetail('sum')" class="learn-btn"><span>Sum Modulo 7</span><span>The Final Step</span></button>
             </div>
         </div>
 
         <div id="page-learn-detail" class="page-content hidden">
             <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
                 <div id="learn-content"></div>
-                <button onclick="showPage('learning')" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg font-bold">BACK TO LEARNING</button>
+                <button onclick="showPage('learning')" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition-colors">BACK TO LEARNING</button>
             </div>
         </div>
 
@@ -127,10 +137,9 @@
             </div>
             <div class="bg-white p-6 rounded-xl shadow-inner border">
                 <h3 class="font-bold border-b pb-2 mb-4 text-gray-500">Calculation Breakdown:</h3>
-                <div class="grid grid-cols-1 gap-2 text-sm font-mono" id="breakdown-list">
-                    </div>
+                <div class="grid grid-cols-1 gap-2 text-sm font-mono" id="breakdown-list"></div>
             </div>
-            <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold">RETURN HOME</button>
+            <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
         </div>
 
         <div id="page-about" class="page-content hidden">
@@ -181,12 +190,12 @@
                  <p>Take your result from <strong>N5</strong> and divide it by 4. Again, use the <strong>Integer</strong> only.</p>
                  <p class="mt-4 bg-gray-100 p-4 rounded font-mono">Example: N5 is 8<br>8 / 4 = 2<br><strong>N6 = 2</strong></p>`,
             leap: `<h3 class="text-xl font-bold mb-4">Leap Year Rules</h3>
-                   <ul class="list-disc ml-5 space-y-2">
+                    <ul class="list-disc ml-5 space-y-2">
                     <li>A year is a leap year if divisible by 4.</li>
                     <li>Except years divisible by 100 (not leap years).</li>
                     <li>Unless also divisible by 400 (these <strong>are</strong> leap years).</li>
-                   </ul>
-                   <p class="mt-4 text-sm italic">Note: Only January and February N1 values are affected by this rule.</p>`,
+                    </ul>
+                    <p class="mt-4 text-sm italic">Note: Only January and February N1 values are affected by this rule.</p>`,
             sum: `<h3 class="text-xl font-bold mb-4">Sum Modulo 7</h3>
                   <p>Add all components: <strong>N1 + N2 + N3 + N4 + N5 + N6</strong>.</p>
                   <p class="my-4">Divide the total by 7. The <strong>remainder</strong> is your day:</p>
@@ -248,7 +257,7 @@
             const btn = document.getElementById('btn-manual-test');
             if (m && d && y >= 1753 && y <= 2799) {
                 btn.disabled = false;
-                btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700";
+                btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700 transition-colors";
                 if (!currentTest.isActive) {
                     currentTest.isActive = true;
                     currentTest.startTime = Date.now();
