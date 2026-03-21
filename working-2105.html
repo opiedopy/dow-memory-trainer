@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOW Memory Trainer 1944ver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
+        .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
+        
+        /* Updated Learning Buttons with Hover and Click effects */
+        .learn-btn { 
+            @apply bg-white border-2 border-indigo-100 p-4 rounded-xl shadow-sm transition-all text-left flex flex-col cursor-pointer; 
+        }
+        .learn-btn:hover { 
+            @apply border-indigo-500 bg-indigo-50 -translate-y-1 shadow-md; 
+        }
+        .learn-btn:active {
+            @apply scale-95 translate-y-0;
+        }
+        .learn-btn span:first-child { @apply text-indigo-600 font-bold text-lg; }
+        .learn-btn span:last-child { @apply text-gray-400 text-[10px] uppercase tracking-wider mt-1 font-semibold; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm pt-6 pb-4 text-center">
+        <h1 class="text-3xl font-bold text-gray-900">DOW Memory Trainer</h1>
+        <p class="text-sm text-gray-600 mt-1">Logic by Jackie Dander &bull; Fuzzywidget.com</p>
+        
+        <nav class="mt-4 flex justify-center space-x-6 text-blue-600 font-medium">
+            <button onclick="showPage('home')" class="hover:underline">Home</button>
+            <button onclick="showPage('learning')" class="hover:underline">Learning</button>
+            <button onclick="showPage('about')" class="hover:underline">About</button>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
+        
+        <div id="page-home" class="page-content">
+            <div class="grid grid-cols-4 gap-4 mb-8">
+                <div class="stat-box">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Tries</span>
+                    <span id="stat-tries" class="text-xl font-bold">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Correct</span>
+                    <span id="stat-correct" class="text-xl font-bold">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="text-xs font-bold text-gray-500 uppercase">%</span>
+                    <span id="stat-percent" class="text-xl font-bold">0</span>
+                </div>
+                <button onclick="resetStats()" class="stat-box bg-red-50 border-red-200 hover:bg-red-100 transition-colors">
+                    <span class="text-xs font-bold text-red-600 uppercase">Reset</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col space-y-4">
+                <button onclick="startRandomTest()" class="w-full bg-green-600 hover:bg-green-700 text-white text-xl font-bold py-6 rounded-xl shadow-lg transition-transform active:scale-95">
+                    START RANDOM TEST
+                </button>
+                <button onclick="showPage('manual')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-6 rounded-xl shadow-lg transition-transform active:scale-95">
+                    START MANUAL TEST
+                </button>
+            </div>
+        </div>
+
+        <div id="page-learning" class="page-content hidden">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard (Click on Choice) </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <button onclick="showLearnDetail('n1')" class="learn-btn"><span style="text-decoration: underline;">N1 - Month</span></button>
+                <button onclick="showLearnDetail('n2')" class="learn-btn"><span style="text-decoration: underline;">N2 - Day</span></button>
+                <button onclick="showLearnDetail('n3')" class="learn-btn"><span style="text-decoration: underline;">N3 - Century</span></button>
+                <button onclick="showLearnDetail('n4')" class="learn-btn"><span style="text-decoration: underline;">N4 - YY/12</span></button>
+                <button onclick="showLearnDetail('n5')" class="learn-btn"><span style="text-decoration: underline;">N5 - YY/12 Modulo</span></button>
+                <button onclick="showLearnDetail('n6')" class="learn-btn"><span style="text-decoration: underline;">N6 - N5 #/4</span></button>
+                <button onclick="showLearnDetail('leap')" class="learn-btn"><span style="text-decoration: underline;">Leap Year Rules</span></button>
+                <button onclick="showLearnDetail('sum')" class="learn-btn"><span style="text-decoration: underline;">Sum Modulo 7</span></button>
+            </div>
+        </div>
+
+        <div id="page-learn-detail" class="page-content hidden">
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                <div id="learn-content"></div>
+                <button onclick="showPage('learning')" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition-colors">BACK TO LEARNING</button>
+            </div>
+        </div>
+
+        <div id="page-test" class="page-content hidden">
+            <div class="text-center mb-6">
+                <button onclick="showPage('learning')" class="text-blue-500 hover:underline text-sm font-medium">Go to Learning Page</button>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center mb-8">
+                <h2 id="display-date" class="text-4xl font-black text-gray-800 tracking-tight">--</h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button onclick="submitAnswer(0)" class="btn-day">Sunday</button>
+                <button onclick="submitAnswer(1)" class="btn-day">Monday</button>
+                <button onclick="submitAnswer(2)" class="btn-day">Tuesday</button>
+                <button onclick="submitAnswer(3)" class="btn-day">Wednesday</button>
+                <button onclick="submitAnswer(4)" class="btn-day">Thursday</button>
+                <button onclick="submitAnswer(5)" class="btn-day">Friday</button>
+                <button onclick="submitAnswer(6)" class="btn-day">Saturday</button>
+            </div>
+        </div>
+
+        <div id="page-manual" class="page-content hidden">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-lg font-bold mb-4 text-center">Select Manual Date</h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        <select id="input-month" onchange="checkManualReady()" class="border p-3 rounded">
+                            <option value="">Month</option>
+                            <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                        </select>
+                        <select id="input-day" onchange="checkManualReady()" class="border p-3 rounded">
+                            <option value="">Day</option>
+                            <script>for(let i=1; i<=31; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                        </select>
+                        <input id="input-year" type="number" min="1753" max="2799" placeholder="Year" oninput="checkManualReady()" class="border p-3 rounded w-full">
+                    </div>
+                    <button id="btn-manual-test" disabled onclick="startManualTest()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed">START TEST</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-results" class="page-content hidden">
+            <div id="result-header" class="text-center p-6 rounded-xl mb-6">
+                <h2 id="result-status" class="text-3xl font-black uppercase mb-2">CORRECT!</h2>
+                <p id="result-date" class="text-xl font-semibold">--</p>
+                <p id="result-time" class="text-lg font-mono text-gray-700 mt-2">Time: 0.00s</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-inner border">
+                <h3 class="font-bold border-b pb-2 mb-4 text-gray-500">Calculation Breakdown:</h3>
+                <div class="grid grid-cols-1 gap-2 text-sm font-mono" id="breakdown-list"></div>
+            </div>
+            <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
+        </div>
+
+        <div id="page-about" class="page-content hidden">
+            <h2 class="text-2xl font-bold mb-4">About</h2>
+            <p class="text-gray-600 italic">This trainer helps you master the mental calculation of any day of the week.</p>
+            <button onclick="showPage('home')" class="mt-4 text-blue-600 underline">Back</button>
+        </div>
+
+    </main>
+
+    <footer class="py-4 text-center text-[10px] text-gray-400 uppercase tracking-widest border-t bg-white">
+        &copy; Jackie Dander &bull; FUZZYWIDGET.COM
+    </footer>
+
+    <script>
+        let stats = { tries: 0, correct: 0 };
+        let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0, isActive: false, manualPreTimerInterval: null };
+        const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        const learnData = {
+            n1: `<h3 class="text-xl font-bold mb-4">N1 - Month Correlation</h3>
+                 <p class="mb-4">Each month has a designated anchor number. However, in <strong>Leap Years</strong>, January and February change.</p>
+                 <table class="w-full text-left border-collapse">
+                    <tr class="border-b"><th>Month</th><th>Standard</th><th>Leap Year</th></tr>
+                    <tr><td>Jan / Feb</td><td>4 / 0</td><td><span class="text-red-600">3 / -1</span></td></tr>
+                    <tr><td>Mar / Apr</td><td>0 / 3</td><td>0 / 3</td></tr>
+                    <tr><td>May / Jun</td><td>5 / 1</td><td>5 / 1</td></tr>
+                    <tr><td>Jul / Aug</td><td>3 / 6</td><td>3 / 6</td></tr>
+                    <tr><td>Sep / Oct</td><td>2 / 4</td><td>2 / 4</td></tr>
+                    <tr><td>Nov / Dec</td><td>0 / 2</td><td>0 / 2</td></tr>
+                 </table>`,
+            n2: `<h3 class="text-xl font-bold mb-4">N2 - Day</h3><p class="text-lg">N2 is simply the <strong>Day Number</strong> of the month.</p><p class="mt-2 bg-gray-100 p-4 rounded font-mono">Example: March 15th &rarr; N2 = 15</p>`,
+            n3: `<h3 class="text-xl font-bold mb-4">N3 - Century Sequence</h3>
+                 <p class="mb-4">The century values follow a repeating <strong>2, 0, 5, 3</strong> sequence:</p>
+                 <ul class="space-y-2 font-mono bg-blue-50 p-4 rounded">
+                    <li>1600s, 2000s, 2400s: <strong>2</strong></li>
+                    <li>1700s, 2100s, 2500s: <strong>0</strong></li>
+                    <li>1800s, 2200s, 2600s: <strong>5</strong></li>
+                    <li>1900s, 2300s, 2700s: <strong>3</strong></li>
+                 </ul>`,
+            n4: `<h3 class="text-xl font-bold mb-4">N4 - YY / 12</h3>
+                 <p>Take the last two digits of the year (YY) and divide by 12. Use the <strong>Integer</strong> (ignore the remainder).</p>
+                 <p class="mt-4 bg-gray-100 p-4 rounded font-mono">Example: 19<strong>44</strong><br>44 / 12 = 3.66...<br><strong>N4 = 3</strong></p>`,
+            n5: `<h3 class="text-xl font-bold mb-4">N5 - YY / 12 Modulo</h3>
+                 <p>Take the last two digits of the year (YY) and find the <strong>remainder</strong> after dividing by 12.</p>
+                 <p class="mt-4 bg-gray-100 p-4 rounded font-mono">Example: 19<strong>44</strong><br>44 / 12 = 3 with <strong>8</strong> left over.<br><strong>N5 = 8</strong></p>`,
+            n6: `<h3 class="text-xl font-bold mb-4">N6 - N5 / 4</h3>
+                 <p>Take your result from <strong>N5</strong> and divide it by 4. Again, use the <strong>Integer</strong> only.</p>
+                 <p class="mt-4 bg-gray-100 p-4 rounded font-mono">Example: N5 is 8<br>8 / 4 = 2<br><strong>N6 = 2</strong></p>`,
+            leap: `<h3 class="text-xl font-bold mb-4">Leap Year Rules</h3>
+                    <ul class="list-disc ml-5 space-y-2">
+                    <li>A year is a leap year if divisible by 4.</li>
+                    <li>Except years divisible by 100 (not leap years).</li>
+                    <li>Unless also divisible by 400 (these <strong>are</strong> leap years).</li>
+                    </ul>
+                    <p class="mt-4 text-sm italic">Note: Only January and February N1 values are affected by this rule.</p>`,
+            sum: `<h3 class="text-xl font-bold mb-4">Sum Modulo 7</h3>
+                  <p>Add all components: <strong>N1 + N2 + N3 + N4 + N5 + N6</strong>.</p>
+                  <p class="my-4">Divide the total by 7. The <strong>remainder</strong> is your day:</p>
+                  <p class="font-mono text-sm">0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat</p>`
+        };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            if (pageId !== 'test') stopTimers();
+            if (pageId === 'manual') resetManualInputs();
+        }
+
+        function showLearnDetail(key) {
+            document.getElementById('learn-content').innerHTML = learnData[key];
+            showPage('learn-detail');
+        }
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+        }
+
+        function calculateDOW(month, day, year) {
+            const monthValues = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
+            if (isLeapYear(year)) { monthValues[0] = 3; monthValues[1] = -1; }
+            const n1 = monthValues[month - 1];
+            const centurylist = [2, 0, 5, 3];
+            const n3 = centurylist[Math.floor(year / 100) % 4];
+            const yy = year % 100;
+            const n4 = Math.floor(yy / 12);
+            const n5 = yy % 12;
+            const n6 = Math.floor(n5 / 4);
+            const sum = n1 + day + n3 + n4 + n5 + n6;
+            const dow = ((sum % 7) + 7) % 7;
+            return { dow, n1, n2: day, n3, n4, n5, n6, sum };
+        }
+
+        function resetStats() { stats = { tries: 0, correct: 0 }; updateStatsDisplay(); }
+
+        function updateStatsDisplay() {
+            document.getElementById('stat-tries').innerText = stats.tries;
+            document.getElementById('stat-correct').innerText = stats.correct;
+            const pct = stats.tries === 0 ? 0 : Math.round((stats.correct / stats.tries) * 100);
+            document.getElementById('stat-percent').innerText = pct;
+        }
+
+        function startRandomTest() {
+            const year = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
+            const month = Math.floor(Math.random() * 12) + 1;
+            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            const day = Math.floor(Math.random() * daysInMonth[month-1]) + 1;
+            setupTest(month, day, year, 0);
+        }
+
+        function checkManualReady() {
+            const m = document.getElementById('input-month').value;
+            const d = document.getElementById('input-day').value;
+            const y = document.getElementById('input-year').value;
+            const btn = document.getElementById('btn-manual-test');
+            if (m && d && y >= 1753 && y <= 2799) {
+                btn.disabled = false;
+                btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700 transition-colors";
+                if (!currentTest.isActive) {
+                    currentTest.isActive = true;
+                    currentTest.startTime = Date.now();
+                    currentTest.manualPreTimerInterval = setInterval(() => {
+                        currentTest.preTime = (Date.now() - currentTest.startTime) / 1000;
+                    }, 100);
+                }
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
+            }
+        }
+
+        function startManualTest() {
+            const m = parseInt(document.getElementById('input-month').value);
+            const d = parseInt(document.getElementById('input-day').value);
+            const y = parseInt(document.getElementById('input-year').value);
+            setupTest(m, d, y, currentTest.preTime);
+        }
+
+        function setupTest(m, d, y, preTime) {
+            currentTest = { month: m, day: d, year: y, preTime: preTime, startTime: Date.now(), isActive: true };
+            document.getElementById('display-date').innerText = `${m}/${d}/${y}`;
+            showPage('test');
+        }
+
+        function submitAnswer(userDow) {
+            const elapsed = (Date.now() - currentTest.startTime) / 1000;
+            const totalTime = elapsed + currentTest.preTime;
+            const res = calculateDOW(currentTest.month, currentTest.day, currentTest.year);
+            const isCorrect = (userDow === res.dow);
+            stats.tries++;
+            if (isCorrect) stats.correct++;
+            updateStatsDisplay();
+
+            const header = document.getElementById('result-header');
+            header.className = `text-center p-6 rounded-xl mb-6 ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            document.getElementById('result-status').innerText = isCorrect ? "CORRECT!" : `WRONG! It's ${dowNames[res.dow]}`;
+            document.getElementById('result-date').innerText = `${currentTest.month}/${currentTest.day}/${currentTest.year}`;
+            document.getElementById('result-time').innerText = `Elapsed Time: ${totalTime.toFixed(2)}s`;
+
+            document.getElementById('breakdown-list').innerHTML = `
+                <div class="flex justify-between border-b py-1"><span>N1: Month</span> <span>${res.n1}</span></div>
+                <div class="flex justify-between border-b py-1"><span>N2: Day</span> <span>${res.n2}</span></div>
+                <div class="flex justify-between border-b py-1"><span>N3: Century</span> <span>${res.n3}</span></div>
+                <div class="flex justify-between border-b py-1"><span>N4: YY/12</span> <span>${res.n4}</span></div>
+                <div class="flex justify-between border-b py-1"><span>N5: Modulo</span> <span>${res.n5}</span></div>
+                <div class="flex justify-between border-b py-1"><span>N6: N5/4</span> <span>${res.n6}</span></div>
+                <div class="flex justify-between pt-2 font-bold text-base"><span>SUM</span> <span>${res.sum}</span></div>
+                <div class="flex justify-between font-bold text-lg text-blue-600"><span>MODULO 7</span> <span>${res.dow} (${dowNames[res.dow]})</span></div>
+            `;
+            showPage('results');
+        }
+
+        function stopTimers() {
+            if (currentTest.manualPreTimerInterval) clearInterval(currentTest.manualPreTimerInterval);
+            currentTest.manualPreTimerInterval = null;
+            currentTest.isActive = false;
+        }
+
+        function resetManualInputs() {
+            document.getElementById('input-month').value = "";
+            document.getElementById('input-day').value = "";
+            document.getElementById('input-year').value = "";
+            currentTest.preTime = 0;
+            checkManualReady();
+        }
+    </script>
+</body>
+</html>
