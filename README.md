@@ -1,6 +1,10 @@
 # dow-memory-trainer
 A collaboration between original code I wrote and Gemini Canvas app creator.
 play it here ------- 🚀 **[Play the DOW Memory Trainer Live Here!](https://opiedopy.github.io/dow-memory-trainer/)**
+On edit: After three days, I though I was finished, but I sent the html code to Claude for review and Claude found 11 things to improve upon. 
+So, thanks to both Gemini and Claude.  I asked Claude if it wanted to start from scratch and it said, no way, let's build upon what you have alrady done. Impressive from both Ai's.
+But: I have to say that is is best to include the working html code for them to edit because if you don't there may be an hallucination or 
+error about what previous code to use.  I learned that the hard way and it cost me two days of work.
 
 Master the "Day of Week" Calendar Calculation
 
