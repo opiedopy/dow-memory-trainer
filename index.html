@@ -30,7 +30,39 @@
         }
 
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
-        .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
+
+        /* FIX: explicit min-height and min-width prevent the box from collapsing
+           on iOS when the value is a single narrow character like "0". */
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            background: #f9fafb;
+            padding: 0.5rem 0.25rem;
+            min-height: 3.5rem;   /* guarantees room for two stacked lines */
+            min-width: 0;         /* lets flexbox shrink correctly inside the grid */
+        }
+        .stat-box .stat-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1;
+            display: block;
+        }
+        .stat-box .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.2;
+            display: block;
+            min-width: 1.5ch;     /* stops a single "0" from collapsing the width */
+            text-align: center;
+        }
 
         .learn-btn {
             display: flex;
@@ -107,19 +139,19 @@
         <div id="page-home" class="page-content">
             <div class="grid grid-cols-4 gap-4 mb-8">
                 <div class="stat-box">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Tries</span>
-                    <span id="stat-tries" class="text-xl font-bold">0</span>
+                    <span class="stat-label">Tries</span>
+                    <span id="stat-tries" class="stat-value">0</span>
                 </div>
                 <div class="stat-box">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Correct</span>
-                    <span id="stat-correct" class="text-xl font-bold">0</span>
+                    <span class="stat-label">Correct</span>
+                    <span id="stat-correct" class="stat-value">0</span>
                 </div>
                 <div class="stat-box">
-                    <span class="text-xs font-bold text-gray-500 uppercase">%</span>
-                    <span id="stat-percent" class="text-xl font-bold">0</span>
+                    <span class="stat-label">%</span>
+                    <span id="stat-percent" class="stat-value">0</span>
                 </div>
-                <button onclick="resetStats()" class="stat-box bg-red-50 border-red-200 hover:bg-red-100 transition-colors">
-                    <span class="text-xs font-bold text-red-600 uppercase">Reset</span>
+                <button onclick="resetStats()" class="stat-box" style="background:#fff1f2; border-color:#fecaca;">
+                    <span class="stat-label" style="color:#dc2626;">Reset</span>
                 </button>
             </div>
 
@@ -297,14 +329,9 @@ And:
     <script>
         let stats = { tries: 0, correct: 0 };
 
-        // Pre-timer: tracks elapsed seconds from when the date is fully entered
-        // until the user clicks START TEST.
         let manualPreTimerInterval = null;
-        let manualPreStartTime = null;   // Date.now() snapshot when pre-timer began
+        let manualPreStartTime = null;
 
-        // currentTest holds everything needed for the active test.
-        // preTimeMs: milliseconds already elapsed before the test page appeared (manual only).
-        // startTime: Date.now() when the test page was shown.
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTimeMs: 0 };
 
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -373,8 +400,6 @@ And:
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
 
-            // Stop and discard the pre-timer whenever navigating away from the manual page
-            // (unless we're transitioning to the test page, which is handled in startManualTest).
             if (pageId !== 'test' && pageId !== 'manual') {
                 cancelPreTimer();
             }
@@ -423,7 +448,6 @@ And:
             document.getElementById('stat-percent').innerText = pct;
         }
 
-        // ── Random test: untouched, timer starts fresh at 0 ──────────────────
         function startRandomTest() {
             cancelPreTimer();
             const year = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
@@ -433,24 +457,17 @@ And:
             setupTest(month, day, year, 0);
         }
 
-        // ── Manual pre-timer helpers ─────────────────────────────────────────
-
-        // Start the pre-timer (called once when all fields first become valid).
         function startPreTimer() {
-            if (manualPreTimerInterval !== null) return; // already running
+            if (manualPreTimerInterval !== null) return;
             manualPreStartTime = Date.now();
-            // Lightweight interval just keeps the timer alive; we read elapsed
-            // time on demand via Date.now() - manualPreStartTime.
             manualPreTimerInterval = setInterval(function() {}, 50);
         }
 
-        // Read how many milliseconds the pre-timer has accumulated so far.
         function getPreTimeMs() {
             if (manualPreStartTime === null) return 0;
             return Date.now() - manualPreStartTime;
         }
 
-        // Stop and discard the pre-timer (navigating away, invalid input, etc.).
         function cancelPreTimer() {
             if (manualPreTimerInterval !== null) {
                 clearInterval(manualPreTimerInterval);
@@ -459,7 +476,6 @@ And:
             manualPreStartTime = null;
         }
 
-        // ── Manual page input validation ─────────────────────────────────────
         function checkManualReady() {
             const m = parseInt(document.getElementById('input-month').value);
             const d = parseInt(document.getElementById('input-day').value);
@@ -516,21 +532,16 @@ And:
             if (allFilled) {
                 btn.disabled = false;
                 btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700 transition-colors";
-                // Start pre-timer the first time the date becomes fully valid.
                 startPreTimer();
             } else {
-                // Fields became incomplete or invalid — stop pre-timer.
                 cancelPreTimer();
                 btn.disabled = true;
                 btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
             }
         }
 
-        // ── Manual test start ────────────────────────────────────────────────
         function startManualTest() {
-            // Capture exactly how long the user spent entering the date.
             const capturedPreTimeMs = getPreTimeMs();
-            // Stop the pre-timer interval (no longer needed).
             cancelPreTimer();
 
             const m = parseInt(document.getElementById('input-month').value);
@@ -540,25 +551,19 @@ And:
             setupTest(m, d, y, capturedPreTimeMs);
         }
 
-        // ── Core test setup ──────────────────────────────────────────────────
-        // preTimeMs: milliseconds already elapsed before this page appeared.
-        // For random tests this is always 0.
-        // For manual tests it is the time spent filling in the date fields.
         function setupTest(m, d, y, preTimeMs) {
             currentTest = {
                 month: m,
                 day: d,
                 year: y,
                 preTimeMs: preTimeMs,
-                startTime: Date.now()   // clock starts the moment the test page appears
+                startTime: Date.now()
             };
             document.getElementById('display-date').innerText = `${m}/${d}/${y}`;
             showPage('test');
         }
 
-        // ── Answer submission ────────────────────────────────────────────────
         function submitAnswer(userDow) {
-            // Total time = time on the choice page + any pre-timer time (manual only).
             const choiceMs = Date.now() - currentTest.startTime;
             const totalSeconds = (choiceMs + currentTest.preTimeMs) / 1000;
 
