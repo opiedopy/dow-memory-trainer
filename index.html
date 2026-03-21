@@ -3,27 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOW Memory Trainer 1944ver</title>
+    <title>DOW Memory Trainer - CL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .hidden { display: none; }
+
+        /* FIX 4: 7-button grid — Sunday through Saturday in a clean layout */
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        @media (min-width: 640px) {
+            .day-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        /* Sunday gets full width on its own row to avoid orphan */
+        .btn-day-sunday {
+            grid-column: 1 / -1;
+        }
+        @media (min-width: 640px) {
+            .btn-day-sunday {
+                grid-column: auto;
+            }
+        }
+
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
         .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
-        
-        /* Updated Learning Buttons with Hover and Click effects */
-        .learn-btn { 
-            @apply bg-white border-2 border-indigo-100 p-4 rounded-xl shadow-sm transition-all text-left flex flex-col cursor-pointer; 
+
+        /* FIX 1: Learning buttons — proper buttons, no underline */
+        .learn-btn {
+            @apply bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-sm transition-all text-center cursor-pointer;
         }
-        .learn-btn:hover { 
-            @apply border-indigo-500 bg-indigo-50 -translate-y-1 shadow-md; 
+        .learn-btn:hover {
+            @apply -translate-y-1 shadow-md;
         }
         .learn-btn:active {
             @apply scale-95 translate-y-0;
         }
-        .learn-btn span:first-child { @apply text-indigo-600 font-bold text-lg; }
-        .learn-btn span:last-child { @apply text-gray-400 text-[10px] uppercase tracking-wider mt-1 font-semibold; }
+
+        /* FIX 7: Mobile breakdown row alignment */
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.35rem 0;
+            gap: 0.5rem;
+        }
+        .breakdown-row span:last-child {
+            text-align: right;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -71,17 +105,17 @@
         </div>
 
         <div id="page-learning" class="page-content hidden">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard (Click on Choice) </h2>
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard</h2>
+            <!-- FIX 1: Proper buttons, no underline. FIX 2: Leap Year and Sum Modulo 7 positions swapped -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <button onclick="showLearnDetail('n1')" class="learn-btn"><span style="text-decoration: underline;">N1 - Month</span></button>
-                <button onclick="showLearnDetail('n2')" class="learn-btn"><span style="text-decoration: underline;">N2 - Day</span></button>
-                <button onclick="showLearnDetail('n3')" class="learn-btn"><span style="text-decoration: underline;">N3 - Century</span></button>
-                <button onclick="showLearnDetail('n4')" class="learn-btn"><span style="text-decoration: underline;">N4 - YY/12</span></button>
-                <button onclick="showLearnDetail('n5')" class="learn-btn"><span style="text-decoration: underline;">N5 - YY/12 Modulo</span></button>
-                <button onclick="showLearnDetail('n6')" class="learn-btn"><span style="text-decoration: underline;">N6 - N5 #/4</span></button>
-                <button onclick="showLearnDetail('leap')" class="learn-btn"><span style="text-decoration: underline;">Leap Year Rules</span></button>
-                <button onclick="showLearnDetail('sum')" class="learn-btn"><span style="text-decoration: underline;">Sum Modulo 7</span></button>
+                <button onclick="showLearnDetail('n1')" class="learn-btn">N1 - Month</button>
+                <button onclick="showLearnDetail('n2')" class="learn-btn">N2 - Day</button>
+                <button onclick="showLearnDetail('n3')" class="learn-btn">N3 - Century</button>
+                <button onclick="showLearnDetail('n4')" class="learn-btn">N4 - YY/12</button>
+                <button onclick="showLearnDetail('n5')" class="learn-btn">N5 - YY/12 Modulo</button>
+                <button onclick="showLearnDetail('n6')" class="learn-btn">N6 - N5 #/4</button>
+                <button onclick="showLearnDetail('sum')" class="learn-btn">Sum Modulo 7</button>
+                <button onclick="showLearnDetail('leap')" class="learn-btn">Leap Year Rules</button>
             </div>
         </div>
 
@@ -99,8 +133,9 @@
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center mb-8">
                 <h2 id="display-date" class="text-4xl font-black text-gray-800 tracking-tight">--</h2>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <button onclick="submitAnswer(0)" class="btn-day">Sunday</button>
+            <!-- FIX 4: 7-button grid so Saturday is not orphaned -->
+            <div class="day-grid">
+                <button onclick="submitAnswer(0)" class="btn-day btn-day-sunday">Sunday</button>
                 <button onclick="submitAnswer(1)" class="btn-day">Monday</button>
                 <button onclick="submitAnswer(2)" class="btn-day">Tuesday</button>
                 <button onclick="submitAnswer(3)" class="btn-day">Wednesday</button>
@@ -125,6 +160,8 @@
                         </select>
                         <input id="input-year" type="number" min="1753" max="2799" placeholder="Year" oninput="checkManualReady()" class="border p-3 rounded w-full">
                     </div>
+                    <!-- FIX 2: Date validation error message -->
+                    <p id="manual-error" class="text-red-600 text-sm font-medium hidden"></p>
                     <button id="btn-manual-test" disabled onclick="startManualTest()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed">START TEST</button>
                 </div>
             </div>
@@ -138,7 +175,8 @@
             </div>
             <div class="bg-white p-6 rounded-xl shadow-inner border">
                 <h3 class="font-bold border-b pb-2 mb-4 text-gray-500">Calculation Breakdown:</h3>
-                <div class="grid grid-cols-1 gap-2 text-sm font-mono" id="breakdown-list"></div>
+                <!-- FIX 7: breakdown-row class for consistent mobile alignment -->
+                <div class="grid grid-cols-1 gap-0 text-sm font-mono" id="breakdown-list"></div>
             </div>
             <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
         </div>
@@ -151,27 +189,28 @@
                    <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>
                     Copyright 2026 </p>
                    <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
-        </div>
+               </div>
 
-        <p>Jackie Dander came up with this method as the simplest memorization method for performing Day of Week tricks standing in front of audiences. It is just figuring out 6 numbers. </p>
-        <p> He thinks you can master the memorization in a few days if you have talent for memorizing lists.</p>
+               <p>Jackie Dander came up with this method as the simplest memorization method for performing Day of Week tricks standing in front of audiences. It is just figuring out 6 numbers. </p>
+               <p> He thinks you can master the memorization in a few days if you have talent for memorizing lists.</p>
         
-        <p>For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! </p>
-        <p>And smile when an audience member gives you an easy date, such as July 4, 2400. As you will find out, that date can be resolved in 3 seconds as Tuesday. </p>
-        <p>Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that.  Bonus golly-whacker Hint: As you willl find out, </p>
-        <p>the last step is to "modulo 7" but the super hint is that you can modulo-7 along the way anytime your addition gets to 7, 14, 21, 28, 35, etc, etc. That means if your date is </p>
-        <p>December 26, then N1 + N2 = 28 and that's zero after modulo 7 so note the zero and go on to N3-4-5-6 to finish calculations.</p>      
+               <p>For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him! </p>
+               <p>And smile when an audience member gives you an easy date, such as July 4, 2400. As you will find out, that date can be resolved in 3 seconds as Tuesday. </p>
+               <p>Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that. Bonus golly-whacker Hint: As you will find out,</p>
+               <!-- FIX 6: Fixed "willl" typo -->
+               <p>the last step is to "modulo 7" but the super hint is that you can modulo-7 along the way anytime your addition gets to 7, 14, 21, 28, 35, etc, etc. That means if your date is </p>
+               <p>December 26, then N1 + N2 = 28 and that's zero after modulo 7 so note the zero and go on to N3-4-5-6 to finish calculations.</p>      
         
-        <div class="pt-4 border-t border-slate-200">
-            <p class="font-bold text-slate-900">Contact Email</p>
-            <a href="mailto:fuzzywidgetart@gmail.com?subject=Inquiry%20from%20FuzzyWidget%20Website" class="text-blue-600 hover:underline break-all">fuzzywidgetart@gmail.com</a>
-        </div>
-    </div>
+               <div class="pt-4 border-t border-slate-200">
+                   <p class="font-bold text-slate-900">Contact Email</p>
+                   <a href="mailto:fuzzywidgetart@gmail.com?subject=Inquiry%20from%20FuzzyWidget%20Website" class="text-blue-600 hover:underline break-all">fuzzywidgetart@gmail.com</a>
+               </div>
+           </div>
 
-    <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-        RETURN HOME
-    </button>
-</div>
+           <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">
+               RETURN HOME
+           </button>
+       </div>
 
     </main>
 
@@ -184,17 +223,26 @@
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0, isActive: false, manualPreTimerInterval: null };
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+        // FIX 3: N1 month table — each month on its own row, no slashes
         const learnData = {
             n1: `<h3 class="text-xl font-bold mb-4">N1 - Month Correlation</h3>
                  <p class="mb-4">Each month has a designated anchor number. However, in <strong>Leap Years</strong>, January and February change.</p>
-                 <table class="w-full text-left border-collapse">
-                    <tr class="border-b"><th>Month</th><th>Standard</th><th>Leap Year</th></tr>
-                    <tr><td>Jan / Feb</td><td>4 / 0</td><td><span class="text-red-600">3 / -1</span></td></tr>
-                    <tr><td>Mar / Apr</td><td>0 / 3</td><td>0 / 3</td></tr>
-                    <tr><td>May / Jun</td><td>5 / 1</td><td>5 / 1</td></tr>
-                    <tr><td>Jul / Aug</td><td>3 / 6</td><td>3 / 6</td></tr>
-                    <tr><td>Sep / Oct</td><td>2 / 4</td><td>2 / 4</td></tr>
-                    <tr><td>Nov / Dec</td><td>0 / 2</td><td>0 / 2</td></tr>
+                 <table class="w-full text-left border-collapse text-sm">
+                    <thead><tr class="border-b bg-gray-50"><th class="py-2 pr-4">Month</th><th class="py-2 pr-4">Standard</th><th class="py-2">Leap Year</th></tr></thead>
+                    <tbody>
+                    <tr class="border-b"><td class="py-2 pr-4">January</td><td class="py-2 pr-4">4</td><td class="py-2 text-red-600 font-semibold">3</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">February</td><td class="py-2 pr-4">0</td><td class="py-2 text-red-600 font-semibold">-1</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">March</td><td class="py-2 pr-4">0</td><td class="py-2">0</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">April</td><td class="py-2 pr-4">3</td><td class="py-2">3</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">May</td><td class="py-2 pr-4">5</td><td class="py-2">5</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">June</td><td class="py-2 pr-4">1</td><td class="py-2">1</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">July</td><td class="py-2 pr-4">3</td><td class="py-2">3</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">August</td><td class="py-2 pr-4">6</td><td class="py-2">6</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">September</td><td class="py-2 pr-4">2</td><td class="py-2">2</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">October</td><td class="py-2 pr-4">4</td><td class="py-2">4</td></tr>
+                    <tr class="border-b"><td class="py-2 pr-4">November</td><td class="py-2 pr-4">0</td><td class="py-2">0</td></tr>
+                    <tr><td class="py-2 pr-4">December</td><td class="py-2 pr-4">2</td><td class="py-2">2</td></tr>
+                    </tbody>
                  </table>`,
             n2: `<h3 class="text-xl font-bold mb-4">N2 - Day</h3><p class="text-lg">N2 is simply the <strong>Day Number</strong> of the month.</p><p class="mt-2 bg-gray-100 p-4 rounded font-mono">Example: March 15th &rarr; N2 = 15</p>`,
             n3: `<h3 class="text-xl font-bold mb-4">N3 - Century Sequence</h3>
@@ -243,6 +291,11 @@
             return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
         }
 
+        // FIX 2: Date validation helper
+        function daysInMonth(month, year) {
+            return new Date(year, month, 0).getDate();
+        }
+
         function calculateDOW(month, day, year) {
             const monthValues = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
             if (isLeapYear(year)) { monthValues[0] = 3; monthValues[1] = -1; }
@@ -270,17 +323,36 @@
         function startRandomTest() {
             const year = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
             const month = Math.floor(Math.random() * 12) + 1;
-            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            const day = Math.floor(Math.random() * daysInMonth[month-1]) + 1;
+            const maxDay = daysInMonth(month, year);
+            const day = Math.floor(Math.random() * maxDay) + 1;
             setupTest(month, day, year, 0);
         }
 
         function checkManualReady() {
-            const m = document.getElementById('input-month').value;
-            const d = document.getElementById('input-day').value;
-            const y = document.getElementById('input-year').value;
+            const m = parseInt(document.getElementById('input-month').value);
+            const d = parseInt(document.getElementById('input-day').value);
+            const y = parseInt(document.getElementById('input-year').value);
             const btn = document.getElementById('btn-manual-test');
-            if (m && d && y >= 1753 && y <= 2799) {
+            const errEl = document.getElementById('manual-error');
+
+            const allFilled = m && d && y >= 1753 && y <= 2799;
+
+            // FIX 2: Validate the day is valid for the chosen month/year
+            if (allFilled) {
+                const maxDay = daysInMonth(m, y);
+                if (d > maxDay) {
+                    errEl.textContent = `Invalid date: ${['January','February','March','April','May','June','July','August','September','October','November','December'][m-1]} ${y} only has ${maxDay} days.`;
+                    errEl.classList.remove('hidden');
+                    btn.disabled = true;
+                    btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
+                    return;
+                }
+            }
+
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
+
+            if (allFilled) {
                 btn.disabled = false;
                 btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700 transition-colors";
                 if (!currentTest.isActive) {
@@ -324,15 +396,16 @@
             document.getElementById('result-date').innerText = `${currentTest.month}/${currentTest.day}/${currentTest.year}`;
             document.getElementById('result-time').innerText = `Elapsed Time: ${totalTime.toFixed(2)}s`;
 
+            // FIX 7: Use breakdown-row class for mobile alignment
             document.getElementById('breakdown-list').innerHTML = `
-                <div class="flex justify-between border-b py-1"><span>N1: Month</span> <span>${res.n1}</span></div>
-                <div class="flex justify-between border-b py-1"><span>N2: Day</span> <span>${res.n2}</span></div>
-                <div class="flex justify-between border-b py-1"><span>N3: Century</span> <span>${res.n3}</span></div>
-                <div class="flex justify-between border-b py-1"><span>N4: YY/12</span> <span>${res.n4}</span></div>
-                <div class="flex justify-between border-b py-1"><span>N5: Modulo</span> <span>${res.n5}</span></div>
-                <div class="flex justify-between border-b py-1"><span>N6: N5/4</span> <span>${res.n6}</span></div>
-                <div class="flex justify-between pt-2 font-bold text-base"><span>SUM</span> <span>${res.sum}</span></div>
-                <div class="flex justify-between font-bold text-lg text-blue-600"><span>MODULO 7</span> <span>${res.dow} (${dowNames[res.dow]})</span></div>
+                <div class="breakdown-row"><span>N1: Month</span><span>${res.n1}</span></div>
+                <div class="breakdown-row"><span>N2: Day</span><span>${res.n2}</span></div>
+                <div class="breakdown-row"><span>N3: Century</span><span>${res.n3}</span></div>
+                <div class="breakdown-row"><span>N4: YY/12</span><span>${res.n4}</span></div>
+                <div class="breakdown-row"><span>N5: Modulo</span><span>${res.n5}</span></div>
+                <div class="breakdown-row"><span>N6: N5/4</span><span>${res.n6}</span></div>
+                <div class="breakdown-row font-bold text-base" style="border-bottom:none;padding-top:0.5rem;"><span>SUM</span><span>${res.sum}</span></div>
+                <div class="breakdown-row font-bold text-lg text-blue-600" style="border-bottom:none;"><span>MODULO 7</span><span>${res.dow} (${dowNames[res.dow]})</span></div>
             `;
             showPage('results');
         }
@@ -350,6 +423,17 @@
             currentTest.preTime = 0;
             checkManualReady();
         }
+
+        // FIX 5: Keyboard support — press 0-6 to submit a day answer
+        document.addEventListener('keydown', function(e) {
+            const testPage = document.getElementById('page-test');
+            if (!testPage.classList.contains('hidden')) {
+                const key = parseInt(e.key);
+                if (!isNaN(key) && key >= 0 && key <= 6) {
+                    submitAnswer(key);
+                }
+            }
+        });
     </script>
 </body>
 </html>
