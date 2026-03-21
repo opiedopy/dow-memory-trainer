@@ -32,7 +32,6 @@
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
         .stat-box { @apply flex flex-col items-center justify-center border p-2 rounded bg-gray-50; }
 
-        /* Learning card buttons */
         .learn-btn {
             display: flex;
             flex-direction: column;
@@ -187,12 +186,15 @@
                 </button>
 
             </div>
+
+            <!-- Back button: returns to wherever the user came from -->
+            <button onclick="goBack()" class="mt-6 w-full bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">BACK</button>
         </div>
 
         <div id="page-learn-detail" class="page-content hidden">
             <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
                 <div id="learn-content"></div>
-                <button onclick="showPage('learning')" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition-colors">BACK TO LEARNING</button>
+                <button onclick="showPage('learning')" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition-colors">BACK</button>
             </div>
         </div>
 
@@ -289,6 +291,9 @@
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0, isActive: false, manualPreTimerInterval: null };
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+        // Tracks the page the user was on before navigating to Learning
+        let previousPage = 'home';
+
         const learnData = {
             n1: `<h3 class="text-xl font-bold mb-4">N1 - Month Correlation</h3>
                  <p class="mb-4">Each month has a designated anchor number. However, in <strong>Leap Years</strong>, January and February change.</p>
@@ -340,11 +345,31 @@
                   <p class="font-mono text-sm">0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat</p>`
         };
 
+        // Core navigation — records where we came from before going to Learning
         function showPage(pageId) {
+            const currentVisible = document.querySelector('.page-content:not(.hidden)');
+            const currentId = currentVisible ? currentVisible.id.replace('page-', '') : 'home';
+
+            // When navigating TO learning from anywhere other than learn-detail,
+            // record where we came from so Back can return there
+            if (pageId === 'learning' && currentId !== 'learn-detail') {
+                previousPage = currentId;
+            }
+
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
-            if (pageId !== 'test') stopTimers();
+
+            // Only stop timers if leaving the test page entirely (not just peeking at Learning)
+            if (pageId !== 'test' && pageId !== 'learning' && pageId !== 'learn-detail') {
+                stopTimers();
+            }
             if (pageId === 'manual') resetManualInputs();
+        }
+
+        // Back button on the Learning page — returns to the page the user came from
+        function goBack() {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`page-${previousPage}`).classList.remove('hidden');
         }
 
         function showLearnDetail(key) {
@@ -400,11 +425,9 @@
             const btn = document.getElementById('btn-manual-test');
             const errEl = document.getElementById('manual-error');
 
-            // Reset error state first
             errEl.classList.add('hidden');
             errEl.textContent = '';
 
-            // Year range check (show error as soon as something is typed)
             if (yRaw !== '') {
                 if (isNaN(y)) {
                     errEl.textContent = 'Please enter a valid year.';
@@ -431,7 +454,6 @@
 
             const allFilled = m && d && yRaw !== '' && !isNaN(y) && y >= 1753 && y <= 2799;
 
-            // Day-in-month validation
             if (allFilled) {
                 const maxDay = daysInMonth(m, y);
                 if (d > maxDay) {
