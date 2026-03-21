@@ -187,7 +187,6 @@
 
             </div>
 
-            <!-- Back button: returns to wherever the user came from -->
             <button onclick="goBack()" class="mt-6 w-full bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">BACK</button>
         </div>
 
@@ -288,10 +287,14 @@
 
     <script>
         let stats = { tries: 0, correct: 0 };
-        let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0, isActive: false, manualPreTimerInterval: null };
+
+        // FIX: manualPreTimerInterval lives outside currentTest so stopTimers()
+        // can always reach it regardless of object reassignment in setupTest.
+        let manualPreTimerInterval = null;
+
+        let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTime: 0 };
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-        // Tracks the page the user was on before navigating to Learning
         let previousPage = 'home';
 
         const learnData = {
@@ -345,13 +348,10 @@
                   <p class="font-mono text-sm">0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat</p>`
         };
 
-        // Core navigation — records where we came from before going to Learning
         function showPage(pageId) {
             const currentVisible = document.querySelector('.page-content:not(.hidden)');
             const currentId = currentVisible ? currentVisible.id.replace('page-', '') : 'home';
 
-            // When navigating TO learning from anywhere other than learn-detail,
-            // record where we came from so Back can return there
             if (pageId === 'learning' && currentId !== 'learn-detail') {
                 previousPage = currentId;
             }
@@ -359,14 +359,12 @@
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
 
-            // Only stop timers if leaving the test page entirely (not just peeking at Learning)
             if (pageId !== 'test' && pageId !== 'learning' && pageId !== 'learn-detail') {
-                stopTimers();
+                stopPreTimer();
             }
             if (pageId === 'manual') resetManualInputs();
         }
 
-        // Back button on the Learning page — returns to the page the user came from
         function goBack() {
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(`page-${previousPage}`).classList.remove('hidden');
@@ -410,6 +408,9 @@
         }
 
         function startRandomTest() {
+            // FIX 1: Stop any lingering pre-timer from a previous manual session
+            // before setting up a fresh random test with preTime = 0.
+            stopPreTimer();
             const year = Math.floor(Math.random() * (2799 - 1753 + 1)) + 1753;
             const month = Math.floor(Math.random() * 12) + 1;
             const maxDay = daysInMonth(month, year);
@@ -469,28 +470,37 @@
             if (allFilled) {
                 btn.disabled = false;
                 btn.className = "w-full bg-indigo-600 text-white font-bold py-4 rounded hover:bg-indigo-700 transition-colors";
-                if (!currentTest.isActive) {
-                    currentTest.isActive = true;
-                    currentTest.startTime = Date.now();
-                    currentTest.manualPreTimerInterval = setInterval(() => {
-                        currentTest.preTime = (Date.now() - currentTest.startTime) / 1000;
-                    }, 100);
+                // FIX 2: Start pre-timer only once when all three fields first become valid.
+                // Use the module-level manualPreTimerInterval so stopPreTimer() can always clear it.
+                if (!manualPreTimerInterval) {
+                    const preStart = Date.now();
+                    manualPreTimerInterval = setInterval(() => {
+                        currentTest.preTime = (Date.now() - preStart) / 1000;
+                    }, 50);
                 }
             } else {
+                // Fields became invalid again — stop and reset the pre-timer
+                stopPreTimer();
                 btn.disabled = true;
                 btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
             }
         }
 
         function startManualTest() {
+            // FIX 2: Snapshot preTime at the exact moment the user clicks Start,
+            // then stop the pre-timer so it doesn't keep running.
+            const capturedPreTime = currentTest.preTime;
+            stopPreTimer();
             const m = parseInt(document.getElementById('input-month').value);
             const d = parseInt(document.getElementById('input-day').value);
             const y = parseInt(document.getElementById('input-year').value);
-            setupTest(m, d, y, currentTest.preTime);
+            setupTest(m, d, y, capturedPreTime);
         }
 
         function setupTest(m, d, y, preTime) {
-            currentTest = { month: m, day: d, year: y, preTime: preTime, startTime: Date.now(), isActive: true };
+            // FIX 1: startTime is stamped here, immediately before showing the test page,
+            // so the elapsed clock only measures time spent on the actual test page.
+            currentTest = { month: m, day: d, year: y, preTime: preTime, startTime: Date.now() };
             document.getElementById('display-date').innerText = `${m}/${d}/${y}`;
             showPage('test');
         }
@@ -523,10 +533,14 @@
             showPage('results');
         }
 
-        function stopTimers() {
-            if (currentTest.manualPreTimerInterval) clearInterval(currentTest.manualPreTimerInterval);
-            currentTest.manualPreTimerInterval = null;
-            currentTest.isActive = false;
+        // FIX: Renamed from stopTimers() — only manages the pre-timer now.
+        // The main test timer is just Date.now() arithmetic, so nothing to stop there.
+        function stopPreTimer() {
+            if (manualPreTimerInterval) {
+                clearInterval(manualPreTimerInterval);
+                manualPreTimerInterval = null;
+            }
+            currentTest.preTime = 0;
         }
 
         function resetManualInputs() {
@@ -536,7 +550,7 @@
             const errEl = document.getElementById('manual-error');
             errEl.classList.add('hidden');
             errEl.textContent = '';
-            currentTest.preTime = 0;
+            stopPreTimer();
             checkManualReady();
         }
 
