@@ -195,11 +195,22 @@
 
         // --- App Flow ---
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${pageId}`).classList.remove('hidden');
-            if (pageId !== 'test') stopTimers();
-        }
+       function showPage(pageId) {
+           document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+           document.getElementById(`page-${pageId}`).classList.remove('hidden');
+    
+    // --- Add this block below ---
+           if (pageId === 'manual') {
+               document.getElementById('input-month').value = "";
+               document.getElementById('input-day').value = "";
+               document.getElementById('input-year').value = "";
+        // Re-run checkManualReady to ensure the "Start" button resets to disabled
+               checkManualReady();
+    }
+    // ----------------------------
+
+               if (pageId !== 'test') stopTimers();
+}
 
         function resetStats() {
             stats = { tries: 0, correct: 0 };
