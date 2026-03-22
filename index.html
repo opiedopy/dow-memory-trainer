@@ -192,11 +192,11 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
     <header class="site-header shadow-lg">
-        <p class="header-eyebrow">Mental Calculation Skill</p>
+        <p class="header-eyebrow">Mental Skill</p>
         <h1 class="header-title">Name the Day of the Week</h1>
         <div class="header-divider"></div>
         <p class="header-subtitle">For any date &mdash; past or future</p>
-        <p class="header-credit">Logic by Jackie Dander &bull; Fuzzywidget.com</p>
+
         <nav class="header-nav">
             <button onclick="showPage('home')">Home</button>
             <button onclick="showPage('learning')">Learning</button>
@@ -312,7 +312,7 @@
                 <h3 class="text-lg font-bold mb-4 text-center">Select Manual Date</h3>
                 <div class="space-y-4">
                     <div class="grid grid-cols-3 gap-2">
-                        <select id="input-month" onchange="checkManualReady()" class="border p-3 rounded">
+                        <select id="input-month" onchange="checkManualReady()" class="border rounded" style="padding: 0.75rem 0.25rem; font-size: 0.9rem; width: 100%; min-width: 0;">
                             <option value="">Month</option>
                             <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                         </select>
@@ -338,7 +338,7 @@
                 <h3 class="font-bold border-b pb-2 mb-4 text-gray-500">Calculation Breakdown:</h3>
                 <div class="grid grid-cols-1 gap-0 text-sm font-mono" id="breakdown-list"></div>
             </div>
-            <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
+            <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">BACK</button>
         </div>
 
         <div id="page-about" class="page-content hidden">
