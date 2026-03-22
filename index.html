@@ -3,36 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOW Memory Trainer - CL</title>
+    <title>Name the Day of the Week</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'DM Sans', sans-serif; }
         .hidden { display: none; }
 
+        /* ── HEADER ─────────────────────────────────────── */
+        .site-header {
+            background: linear-gradient(160deg, #0d1117 0%, #1e2d45 60%, #0d1117 100%);
+            padding: 2.5rem 1rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* subtle dot-grid texture */
+        .site-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(201,168,76,0.13) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        .header-eyebrow {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #c9a84c;
+            margin-bottom: 0.65rem;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.1s;
+        }
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 5.5vw, 3rem);
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.25s;
+        }
+        .header-divider {
+            width: 3rem;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+            margin: 0.9rem auto;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.4s;
+        }
+        .header-subtitle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+            font-weight: 400;
+            color: rgba(255,255,255,0.58);
+            font-style: italic;
+            letter-spacing: 0.02em;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.5s;
+        }
+        .header-credit {
+            margin-top: 1rem;
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: rgba(201,168,76,0.5);
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.62s;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── NAV ─────────────────────────────────────────── */
+        .header-nav {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.55s ease forwards 0.74s;
+        }
+        .header-nav button {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .header-nav button:hover {
+            color: #c9a84c;
+            border-bottom-color: #c9a84c;
+        }
+
+        /* ── REST OF EXISTING STYLES ─────────────────────── */
         .day-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
         @media (min-width: 640px) {
-            .day-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .day-grid { grid-template-columns: repeat(4, 1fr); }
         }
-        .btn-day-sunday {
-            grid-column: 1 / -1;
-        }
+        .btn-day-sunday { grid-column: 1 / -1; }
         @media (min-width: 640px) {
-            .btn-day-sunday {
-                grid-column: auto;
-            }
+            .btn-day-sunday { grid-column: auto; }
         }
-
         .btn-day { @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center; }
 
-        /* FIX: explicit min-height and min-width prevent the box from collapsing
-           on iOS when the value is a single narrow character like "0". */
         .stat-box {
             display: flex;
             flex-direction: column;
@@ -42,8 +135,8 @@
             border-radius: 0.375rem;
             background: #f9fafb;
             padding: 0.5rem 0.25rem;
-            min-height: 3.5rem;   /* guarantees room for two stacked lines */
-            min-width: 0;         /* lets flexbox shrink correctly inside the grid */
+            min-height: 3.5rem;
+            min-width: 0;
         }
         .stat-box .stat-label {
             font-size: 0.65rem;
@@ -60,7 +153,7 @@
             color: #111827;
             line-height: 1.2;
             display: block;
-            min-width: 1.5ch;     /* stops a single "0" from collapsing the width */
+            min-width: 1.5ch;
             text-align: center;
         }
 
@@ -79,33 +172,11 @@
             transition: transform 0.15s, box-shadow 0.15s;
             width: 100%;
         }
-        .learn-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(99,102,241,0.28);
-        }
-        .learn-btn:active {
-            transform: scale(0.97) translateY(0);
-        }
-        .learn-btn-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            opacity: 0.82;
-            margin-bottom: 0.25rem;
-        }
-        .learn-btn-label {
-            font-size: 1.08rem;
-            font-weight: 800;
-            line-height: 1.2;
-        }
-        .learn-btn-hint {
-            font-size: 0.72rem;
-            margin-top: 0.35rem;
-            opacity: 0.72;
-            font-style: italic;
-            line-height: 1.35;
-        }
+        .learn-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(99,102,241,0.28); }
+        .learn-btn:active { transform: scale(0.97) translateY(0); }
+        .learn-btn-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.82; margin-bottom: 0.25rem; }
+        .learn-btn-label { font-size: 1.08rem; font-weight: 800; line-height: 1.2; }
+        .learn-btn-hint { font-size: 0.72rem; margin-top: 0.35rem; opacity: 0.72; font-style: italic; line-height: 1.35; }
 
         .breakdown-row {
             display: flex;
@@ -115,27 +186,26 @@
             padding: 0.35rem 0;
             gap: 0.5rem;
         }
-        .breakdown-row span:last-child {
-            text-align: right;
-            flex-shrink: 0;
-        }
+        .breakdown-row span:last-child { text-align: right; flex-shrink: 0; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-sm pt-6 pb-4 text-center">
-        <h1 class="text-3xl font-bold text-gray-900">DOW Memory Trainer</h1>
-        <p class="text-sm text-gray-600 mt-1">Logic by Jackie Dander &bull; Fuzzywidget.com</p>
-        
-        <nav class="mt-4 flex justify-center space-x-6 text-blue-600 font-medium">
-            <button onclick="showPage('home')" class="hover:underline">Home</button>
-            <button onclick="showPage('learning')" class="hover:underline">Learning</button>
-            <button onclick="showPage('about')" class="hover:underline">About</button>
+    <header class="site-header shadow-lg">
+        <p class="header-eyebrow">Mental Calculation Skill</p>
+        <h1 class="header-title">Name the Day of the Week</h1>
+        <div class="header-divider"></div>
+        <p class="header-subtitle">For any date &mdash; past or future</p>
+        <p class="header-credit">Logic by Jackie Dander &bull; Fuzzywidget.com</p>
+        <nav class="header-nav">
+            <button onclick="showPage('home')">Home</button>
+            <button onclick="showPage('learning')">Learning</button>
+            <button onclick="showPage('about')">About</button>
         </nav>
     </header>
 
     <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
-        
+
         <div id="page-home" class="page-content">
             <div class="grid grid-cols-4 gap-4 mb-8">
                 <div class="stat-box">
@@ -168,57 +238,47 @@
         <div id="page-learning" class="page-content hidden">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Learning Dashboard</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
                 <button onclick="showLearnDetail('n1')" class="learn-btn">
                     <span class="learn-btn-title">Step 1</span>
                     <span class="learn-btn-label">N1 &mdash; Month</span>
                     <span class="learn-btn-hint">Look up your month's anchor number (adjusts for leap years in Jan &amp; Feb)</span>
                 </button>
-
                 <button onclick="showLearnDetail('n2')" class="learn-btn">
                     <span class="learn-btn-title">Step 2</span>
                     <span class="learn-btn-label">N2 &mdash; Day</span>
                     <span class="learn-btn-hint">Simply the day of the month as-is (e.g. the 15th &rarr; N2 = 15)</span>
                 </button>
-
                 <button onclick="showLearnDetail('n3')" class="learn-btn">
                     <span class="learn-btn-title">Step 3</span>
                     <span class="learn-btn-label">N3 &mdash; Century</span>
                     <span class="learn-btn-hint">Repeating 2, 0, 5, 3 sequence based on the century (1600s, 1700s&hellip;)</span>
                 </button>
-
                 <button onclick="showLearnDetail('n4')" class="learn-btn">
                     <span class="learn-btn-title">Step 4</span>
                     <span class="learn-btn-label">N4 &mdash; YY &divide; 12</span>
                     <span class="learn-btn-hint">Divide the last 2 digits of the year by 12, keep only the whole number</span>
                 </button>
-
                 <button onclick="showLearnDetail('n5')" class="learn-btn">
                     <span class="learn-btn-title">Step 5</span>
                     <span class="learn-btn-label">N5 &mdash; YY &divide; 12 Modulo</span>
                     <span class="learn-btn-hint">The remainder left over after dividing the last 2 year digits by 12</span>
                 </button>
-
                 <button onclick="showLearnDetail('n6')" class="learn-btn">
                     <span class="learn-btn-title">Step 6</span>
                     <span class="learn-btn-label">N6 &mdash; N5 &divide; 4</span>
                     <span class="learn-btn-hint">Divide your N5 result by 4, keep only the whole number</span>
                 </button>
-
                 <button onclick="showLearnDetail('sum')" class="learn-btn">
                     <span class="learn-btn-title">Final Step</span>
                     <span class="learn-btn-label">Sum Modulo 7</span>
                     <span class="learn-btn-hint">Add N1&ndash;N6, divide by 7, and the remainder reveals the day of week</span>
                 </button>
-
                 <button onclick="showLearnDetail('leap')" class="learn-btn" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); box-shadow: 0 2px 8px rgba(20,184,166,0.18);">
                     <span class="learn-btn-title">Reference</span>
                     <span class="learn-btn-label">Leap Year Rules</span>
                     <span class="learn-btn-hint">Div by 4 = leap; except centuries, unless also div by 400</span>
                 </button>
-
             </div>
-
             <button onclick="goBack()" class="mt-6 w-full bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">BACK</button>
         </div>
 
@@ -281,44 +341,33 @@
             <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
         </div>
 
-       <div id="page-about" class="page-content hidden">
-           <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
-               <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
-        
-               <div class="italic space-y-2">
-                   <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>
-                    Copyright 2026 </p>
-                   <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
-                   <p>  </p></p>
-              <div style="margin: 0; padding: 0; line-height: 1.2;">
-  Jackie Dander came up with this method as the simplest memorization method for performing Day of Week tricks standing in front of audiences. It is just figuring out 6 numbers.<br><br>
-  He thinks you can master the memorization in a few days if you have talent for memorizing lists.<br><br>
-  For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him!<br><br>
-  And smile when an audience member gives you an easy date, such as July 4, 2400. As you will find out, that date can be resolved in 3 seconds as Tuesday.<br><br>
-  Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that. Bonus golly-whacker Hint: As you will find out,<br><br>
-  the last step is to "modulo 7" but the super hint is that you can modulo-7 along the way anytime your addition gets to 7, 14, 21, 28, 35, etc, etc. That means if your date is<br><br>
-  December 26, then N1 + N2 = 28 and that's zero after modulo 7 so note the zero and go on to N3-4-5-6 to finish calculations.<br><br>
-
-                  What days of the week are going to impact you the most, going forward?<br><br>
-
-
-                  Yes, this year, next year and maybe the year that follows. So, as I write this that would be 2026, 2027 and 2028. So, I memorize N3 + N4 + N5 + N6 for those years.<br><br>
-And:
-2026 totals for N3/4/5/6 = 6<br><br>
-
-                  2027 totals for N3/4/5/6 = 0<br><br>
-
-                  2028 totals for N3/4/5/6 = 2<br><br>
-
-                  Wow!<br><br>
-
-                  That speeds things up and is very useful. If your birthday is September 6th, then you know that your birthday falls on Sunday this year, Monday next year, and Wednesday in 2028. (N1 = 2, N2 + 6, so sum so far is 8. Then add 8 to the three memorized numbers above, and modulo the sum by 7.)<br><br>
-           </div>
-
-           <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-               RETURN HOME
-           </button>
-       </div>
+        <div id="page-about" class="page-content hidden">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
+                <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
+                <div class="italic space-y-2">
+                    <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright 2026</p>
+                    <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.</p>
+                </div>
+                <div style="margin: 0; padding: 0; line-height: 1.2;">
+                    Jackie Dander came up with this method as the simplest memorization method for performing Day of Week tricks standing in front of audiences. It is just figuring out 6 numbers.<br><br>
+                    He thinks you can master the memorization in a few days if you have talent for memorizing lists.<br><br>
+                    For Jackie, at age 78, he thinks it is a better brain exercise than crossword puzzles. He has honed his Day of Week skills to average 30 seconds. See if you can beat him!<br><br>
+                    And smile when an audience member gives you an easy date, such as July 4, 2400. As you will find out, that date can be resolved in 3 seconds as Tuesday.<br><br>
+                    Look at the app and there are many dates like that. Maybe quit during a presentation if you get an easy one like that. Bonus golly-whacker Hint: As you will find out,<br><br>
+                    the last step is to "modulo 7" but the super hint is that you can modulo-7 along the way anytime your addition gets to 7, 14, 21, 28, 35, etc, etc. That means if your date is<br><br>
+                    December 26, then N1 + N2 = 28 and that's zero after modulo 7 so note the zero and go on to N3-4-5-6 to finish calculations.<br><br>
+                    What days of the week are going to impact you the most, going forward?<br><br>
+                    Yes, this year, next year and maybe the year that follows. So, as I write this that would be 2026, 2027 and 2028. So, I memorize N3 + N4 + N5 + N6 for those years.<br><br>
+                    And:<br>
+                    2026 totals for N3/4/5/6 = 6<br><br>
+                    2027 totals for N3/4/5/6 = 0<br><br>
+                    2028 totals for N3/4/5/6 = 2<br><br>
+                    Wow!<br><br>
+                    That speeds things up and is very useful. If your birthday is September 6th, then you know that your birthday falls on Sunday this year, Monday next year, and Wednesday in 2028. (N1 = 2, N2 + 6, so sum so far is 8. Then add 8 to the three memorized numbers above, and modulo the sum by 7.)<br><br>
+                </div>
+                <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
+            </div>
+        </div>
 
     </main>
 
@@ -328,14 +377,10 @@ And:
 
     <script>
         let stats = { tries: 0, correct: 0 };
-
         let manualPreTimerInterval = null;
         let manualPreStartTime = null;
-
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTimeMs: 0 };
-
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
         let previousPage = 'home';
 
         const learnData = {
@@ -392,17 +437,10 @@ And:
         function showPage(pageId) {
             const currentVisible = document.querySelector('.page-content:not(.hidden)');
             const currentId = currentVisible ? currentVisible.id.replace('page-', '') : 'home';
-
-            if (pageId === 'learning' && currentId !== 'learn-detail') {
-                previousPage = currentId;
-            }
-
+            if (pageId === 'learning' && currentId !== 'learn-detail') previousPage = currentId;
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
-
-            if (pageId !== 'test' && pageId !== 'manual') {
-                cancelPreTimer();
-            }
+            if (pageId !== 'test' && pageId !== 'manual') cancelPreTimer();
             if (pageId === 'manual') resetManualInputs();
         }
 
@@ -469,10 +507,7 @@ And:
         }
 
         function cancelPreTimer() {
-            if (manualPreTimerInterval !== null) {
-                clearInterval(manualPreTimerInterval);
-                manualPreTimerInterval = null;
-            }
+            if (manualPreTimerInterval !== null) { clearInterval(manualPreTimerInterval); manualPreTimerInterval = null; }
             manualPreStartTime = null;
         }
 
@@ -483,7 +518,6 @@ And:
             const y = parseInt(yRaw);
             const btn = document.getElementById('btn-manual-test');
             const errEl = document.getElementById('manual-error');
-
             errEl.classList.add('hidden');
             errEl.textContent = '';
 
@@ -493,24 +527,21 @@ And:
                     errEl.classList.remove('hidden');
                     btn.disabled = true;
                     btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
-                    cancelPreTimer();
-                    return;
+                    cancelPreTimer(); return;
                 }
                 if (y < 1753) {
                     errEl.textContent = 'Year must be 1753 or later. (Before 1753, the Julian calendar was in use.)';
                     errEl.classList.remove('hidden');
                     btn.disabled = true;
                     btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
-                    cancelPreTimer();
-                    return;
+                    cancelPreTimer(); return;
                 }
                 if (y > 2799) {
                     errEl.textContent = 'Year must be 2799 or earlier. (After 2799, the Gregorian and Revised Julian calendars diverge.)';
                     errEl.classList.remove('hidden');
                     btn.disabled = true;
                     btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
-                    cancelPreTimer();
-                    return;
+                    cancelPreTimer(); return;
                 }
             }
 
@@ -524,8 +555,7 @@ And:
                     errEl.classList.remove('hidden');
                     btn.disabled = true;
                     btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded cursor-not-allowed";
-                    cancelPreTimer();
-                    return;
+                    cancelPreTimer(); return;
                 }
             }
 
@@ -543,22 +573,14 @@ And:
         function startManualTest() {
             const capturedPreTimeMs = getPreTimeMs();
             cancelPreTimer();
-
             const m = parseInt(document.getElementById('input-month').value);
             const d = parseInt(document.getElementById('input-day').value);
             const y = parseInt(document.getElementById('input-year').value);
-
             setupTest(m, d, y, capturedPreTimeMs);
         }
 
         function setupTest(m, d, y, preTimeMs) {
-            currentTest = {
-                month: m,
-                day: d,
-                year: y,
-                preTimeMs: preTimeMs,
-                startTime: Date.now()
-            };
+            currentTest = { month: m, day: d, year: y, preTimeMs: preTimeMs, startTime: Date.now() };
             document.getElementById('display-date').innerText = `${m}/${d}/${y}`;
             showPage('test');
         }
@@ -566,7 +588,6 @@ And:
         function submitAnswer(userDow) {
             const choiceMs = Date.now() - currentTest.startTime;
             const totalSeconds = (choiceMs + currentTest.preTimeMs) / 1000;
-
             const res = calculateDOW(currentTest.month, currentTest.day, currentTest.year);
             const isCorrect = (userDow === res.dow);
             stats.tries++;
@@ -607,9 +628,7 @@ And:
             const testPage = document.getElementById('page-test');
             if (!testPage.classList.contains('hidden')) {
                 const key = parseInt(e.key);
-                if (!isNaN(key) && key >= 0 && key <= 6) {
-                    submitAnswer(key);
-                }
+                if (!isNaN(key) && key >= 0 && key <= 6) submitAnswer(key);
             }
         });
     </script>
