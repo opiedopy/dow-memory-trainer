@@ -19,7 +19,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* subtle dot-grid texture */
         .site-header::before {
             content: '';
             position: absolute;
@@ -111,7 +110,6 @@
             border-bottom-color: #c9a84c;
         }
 
-        /* ── REST OF EXISTING STYLES ─────────────────────── */
         .day-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -341,9 +339,19 @@
             <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">BACK</button>
         </div>
 
+        <!-- ── ABOUT PAGE ──────────────────────────────────── -->
         <div id="page-about" class="page-content hidden">
             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
-                <p class="font-bold text-slate-900 border-b pb-1">Day of Week (DOW) Calculation (1753–2799)</p>
+
+                <!-- Title row with Privacy link -->
+                <div class="flex items-center justify-between border-b pb-2">
+                    <p class="font-bold text-slate-900">Day of Week (DOW) Calculation (1753–2799)</p>
+                    <button onclick="showPage('privacy')"
+                        class="flex items-center gap-1 text-xs font-semibold text-blue-600 underline hover:text-blue-800 ml-4 shrink-0">
+                        🔒 PRIVACY
+                    </button>
+                </div>
+
                 <div class="italic space-y-2">
                     <p>CREATED BY JACKIE DANDER OF FUZZYWIDGET.COM<br>Copyright 2026</p>
                     <p>Note: After February 29, 2800 there will be two calendars in use, the Revised Julian and the Gregorian. So, we stop at 2799. And before 1753, the USA and world used the Julian calendar, so we stop at 1753.<br><br>
@@ -366,12 +374,44 @@
                     That speeds things up and is very useful. If your birthday is September 6th, then you know that your birthday falls on Sunday this year, Monday next year, and Wednesday in 2028. (N1 = 2, N2 + 6, so sum so far is 8. Then add 8 to the three memorized numbers above, and modulo the sum by 7.)<br><br>
                     Because 2027 is around the corner, take advantage of N3+N4+N5+N6 = 0 for 2027.  So, for any date during 2027, the memory skill to determine the day of the week for any day is only to add N1 + N2 and use that sum.<br><br>
                 <footer>
-                  <p>For inquiries, <a href="mailto:fuzzywidgetart@gmail.com" 
-                  class="text-blue-600 underline hover:text-blue-800">email here</a></p>
+                  <p>For inquiries, <a href="mailto:fuzzywidgetart@gmail.com"
+                     class="text-blue-600 underline hover:text-blue-800">email here</a></p>
                 </footer>
-
                 </div>
                 <button onclick="showPage('home')" class="mt-8 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">RETURN HOME</button>
+            </div>
+        </div>
+
+        <!-- ── PRIVACY PAGE ────────────────────────────────── -->
+        <div id="page-privacy" class="page-content hidden">
+            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-4">
+                <div class="flex items-center gap-2 border-b pb-2">
+                    <span class="text-lg">🔒</span>
+                    <p class="font-bold text-slate-900 text-base">Privacy &amp; Safety Statement</p>
+                </div>
+
+                <p>This site asks for no user information. It does not ask for any access to anything, provides no advertisements, and collects no fees or revenue. <strong>It is as safe as a PDF.</strong></p>
+
+                <p>It is hosted at <strong>GitHub</strong>, which is owned by Microsoft. GitHub is used by every major corporation and developer in the world to store their code — so it is safe.</p>
+
+                <hr class="border-slate-200">
+
+                <p class="font-semibold text-slate-800">Additional Details</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li><strong>No cookies</strong> — this app sets no cookies of any kind.</li>
+                    <li><strong>No tracking</strong> — there is no analytics, telemetry, or usage tracking whatsoever.</li>
+                    <li><strong>No accounts</strong> — no login, registration, or personal data of any kind is collected or stored.</li>
+                    <li><strong>No network requests</strong> — all calculations run entirely in your browser. No data is ever sent to any server.</li>
+                    <li><strong>No third-party scripts</strong> — only Tailwind CSS (a standard styling library) and Google Fonts are loaded, both widely-used and privacy-respecting resources.</li>
+                    <li><strong>Open-source hosting</strong> — GitHub Pages is a transparent, reputable static hosting platform with no server-side processing.</li>
+                    <li><strong>No ads, ever</strong> — this site has no advertising of any kind and is not monetized.</li>
+                </ul>
+
+                <p class="italic text-slate-500 text-xs pt-2 border-t border-slate-200">
+                    In short: this is a simple, read-only web page. It cannot see you, hear you, track you, or charge you. It just helps you calculate days of the week.
+                </p>
+
+                <button onclick="showPage('about')" class="mt-2 w-full bg-gray-800 text-white py-4 rounded-xl font-bold hover:bg-gray-700 transition-colors">← BACK TO ABOUT</button>
             </div>
         </div>
 
