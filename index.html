@@ -191,9 +191,90 @@
             gap: 0.5rem;
         }
         .breakdown-row span:last-child { text-align: right; flex-shrink: 0; }
+
+        /* ── CHALLENGE BANNER ────────────────────────────── */
+        .challenge-banner {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 12px rgba(168,85,247,0.35);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .challenge-banner p {
+            color: white;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            margin: 0;
+        }
+        .challenge-banner .sub {
+            font-size: 0.72rem;
+            font-weight: 500;
+            opacity: 0.85;
+            margin-top: 0.1rem;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 2px 12px rgba(168,85,247,0.35); }
+            50%       { box-shadow: 0 4px 24px rgba(168,85,247,0.65); }
+        }
+
+        /* ── STAR BADGE ──────────────────────────────────── */
+        .star-badge {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            border-radius: 0.5rem;
+            padding: 0.45rem 0.75rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 10px rgba(251,191,36,0.4);
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: badge-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        .star-badge.visible { display: flex; }
+        .star-badge .badge-stars { font-size: 1.1rem; letter-spacing: 0.05em; }
+        .star-badge .badge-text { font-size: 0.75rem; font-weight: 700; color: #78350f; line-height: 1.2; }
+        .star-badge .badge-text strong { display: block; font-size: 0.82rem; color: #451a03; }
+        @keyframes badge-pop {
+            from { transform: scale(0.5); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        /* ── CONFETTI CANVAS ─────────────────────────────── */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ── FAST-TIME RESULT HIGHLIGHT ─────────────────── */
+        .result-fast {
+            position: relative;
+            overflow: hidden;
+        }
+        .result-fast::after {
+            content: '⚡ UNDER 30 SECONDS!';
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #7c3aed;
+            letter-spacing: 0.08em;
+            background: rgba(139,92,246,0.12);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Confetti canvas (always present, invisible until fired) -->
+    <canvas id="confetti-canvas"></canvas>
 
     <header class="site-header shadow-lg">
         <p class="header-eyebrow">Mental Skill</p>
@@ -211,6 +292,15 @@
     <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
 
         <div id="page-home" class="page-content">
+            <!-- Star badge — shown when at least one sub-30s correct answer earned -->
+            <div id="star-badge" class="star-badge">
+                <span class="badge-stars">⭐⭐⭐</span>
+                <div class="badge-text">
+                    <strong>Speed Champion!</strong>
+                    Answered correctly in under 30 seconds
+                </div>
+            </div>
+
             <div class="grid grid-cols-4 gap-4 mb-8">
                 <div class="stat-box">
                     <span class="stat-label">Tries</span>
@@ -294,6 +384,12 @@
         </div>
 
         <div id="page-test" class="page-content hidden">
+            <!-- ⚡ CHALLENGE BANNER -->
+            <div class="challenge-banner">
+                <p>⚡ BEAT 30 SECONDS CHALLENGE ⚡</p>
+                <p class="sub">Answer correctly in under 30 seconds to earn a Speed Champion star!</p>
+            </div>
+
             <div class="text-center mb-6">
                 <button onclick="showPage('learning')" class="text-blue-500 hover:underline text-sm font-medium">Go to Learning Page</button>
             </div>
@@ -430,13 +526,84 @@
     </footer>
 
     <script>
-        let stats = { tries: 0, correct: 0 };
+        let stats = { tries: 0, correct: 0, earnedStar: false };
         let manualPreTimerInterval = null;
         let manualPreStartTime = null;
         let currentTest = { month: 1, day: 1, year: 2024, startTime: 0, preTimeMs: 0 };
         const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         let previousPage = 'home';
 
+        // ── CONFETTI ENGINE ───────────────────────────────────
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiParticles = [];
+        let confettiAnimFrame = null;
+
+        function resizeConfetti() {
+            confettiCanvas.width  = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function launchConfetti() {
+            confettiParticles = [];
+            for (let i = 0; i < 160; i++) {
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: -10 - Math.random() * 60,
+                    w: 8 + Math.random() * 8,
+                    h: 5 + Math.random() * 5,
+                    color: ['#c9a84c','#6366f1','#ec4899','#22c55e','#f59e0b','#3b82f6','#a855f7'][Math.floor(Math.random()*7)],
+                    angle: Math.random() * Math.PI * 2,
+                    spin:  (Math.random() - 0.5) * 0.2,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: 2 + Math.random() * 4,
+                    alpha: 1
+                });
+            }
+            if (confettiAnimFrame) cancelAnimationFrame(confettiAnimFrame);
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            let alive = false;
+            confettiParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.07;           // gravity
+                p.angle += p.spin;
+                if (p.y < confettiCanvas.height + 20) alive = true;
+                if (p.y > confettiCanvas.height * 0.6) p.alpha -= 0.018;
+                p.alpha = Math.max(0, p.alpha);
+
+                confettiCtx.save();
+                confettiCtx.globalAlpha = p.alpha;
+                confettiCtx.translate(p.x, p.y);
+                confettiCtx.rotate(p.angle);
+                confettiCtx.fillStyle = p.color;
+                confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                confettiCtx.restore();
+            });
+            if (alive) {
+                confettiAnimFrame = requestAnimationFrame(animateConfetti);
+            } else {
+                confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        // ── STAR BADGE ────────────────────────────────────────
+        function updateStarBadge() {
+            const badge = document.getElementById('star-badge');
+            if (stats.earnedStar) {
+                badge.classList.add('visible');
+            } else {
+                badge.classList.remove('visible');
+            }
+        }
+
+        // ── LEARN DATA ────────────────────────────────────────
         const learnData = {
             n1: `<h3 class="text-xl font-bold mb-4">N1 - Month Correlation</h3>
                  <p class="mb-4">Each month has a designated anchor number. However, in <strong>Leap Years</strong>, January and February change.</p>
@@ -496,6 +663,7 @@
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
             if (pageId !== 'test' && pageId !== 'manual') cancelPreTimer();
             if (pageId === 'manual') resetManualInputs();
+            if (pageId === 'home') updateStarBadge();
         }
 
         function goBack() {
@@ -531,7 +699,11 @@
             return { dow, n1, n2: day, n3, n4, n5, n6, sum };
         }
 
-        function resetStats() { stats = { tries: 0, correct: 0 }; updateStatsDisplay(); }
+        function resetStats() {
+            stats = { tries: 0, correct: 0, earnedStar: false };
+            updateStatsDisplay();
+            updateStarBadge();
+        }
 
         function updateStatsDisplay() {
             document.getElementById('stat-tries').innerText = stats.tries;
@@ -644,13 +816,26 @@
             const totalSeconds = (choiceMs + currentTest.preTimeMs) / 1000;
             const res = calculateDOW(currentTest.month, currentTest.day, currentTest.year);
             const isCorrect = (userDow === res.dow);
+            const isFast = totalSeconds <= 30;
+
             stats.tries++;
-            if (isCorrect) stats.correct++;
+            if (isCorrect) {
+                stats.correct++;
+                if (isFast) {
+                    stats.earnedStar = true;
+                    launchConfetti();
+                }
+            }
             updateStatsDisplay();
 
             const header = document.getElementById('result-header');
-            header.className = `text-center p-6 rounded-xl mb-6 ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-            document.getElementById('result-status').innerText = isCorrect ? "CORRECT!" : `WRONG! It's ${dowNames[res.dow]}`;
+            let headerClass = `text-center p-6 rounded-xl mb-6 ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            if (isCorrect && isFast) headerClass += ' result-fast';
+            header.className = headerClass;
+
+            let statusText = isCorrect ? "CORRECT!" : `WRONG! It's ${dowNames[res.dow]}`;
+            if (isCorrect && isFast) statusText = "⚡ CORRECT! Under 30s!";
+            document.getElementById('result-status').innerText = statusText;
             document.getElementById('result-date').innerText = `${currentTest.month}/${currentTest.day}/${currentTest.year}`;
             document.getElementById('result-time').innerText = `Elapsed Time: ${totalSeconds.toFixed(2)}s`;
 
@@ -685,6 +870,9 @@
                 if (!isNaN(key) && key >= 0 && key <= 6) submitAnswer(key);
             }
         });
+
+        // Init badge state on load
+        updateStarBadge();
     </script>
 </body>
 </html>
